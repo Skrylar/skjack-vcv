@@ -9,8 +9,6 @@ void JackAudioModule::step() {
 	int sampleRate = (int) engineGetSampleRate();
 	inputSrc.setRates(g_jack_samplerate, sampleRate);
 	outputSrc.setRates(sampleRate, g_jack_samplerate);
-	inputSrc.setChannels(AUDIO_INPUT);
-	outputSrc.setChannels(AUDIO_OUTPUT);
 
 	// == FROM RACK TO JACK ==
 	if (!rack_output_buffer.full()) {

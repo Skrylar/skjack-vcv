@@ -47,6 +47,9 @@ struct JackAudioModule : Module {
 		snprintf(reinterpret_cast<char*>(&port_name), 128, "%p", reinterpret_cast<void*>(this));
 		jport = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 
+		inputSrc.setChannels(AUDIO_INPUT);
+		outputSrc.setChannels(AUDIO_OUTPUT);
+		
 		g_audio_modules.push_back(this);
 	}
 

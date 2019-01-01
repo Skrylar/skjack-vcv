@@ -14,7 +14,7 @@ void JackAudioModule::step() {
 	if (!rack_output_buffer.full()) {
 		Frame<AUDIO_OUTPUTS> outputFrame;
 		for (int i = 0; i < AUDIO_OUTPUTS; i++) {
-			outputFrame.samples[i] = inputs[AUDIO_INPUT + i].value / 10.f;
+			outputFrame.samples[i] = inputs[AUDIO_INPUT + i].value / 10.0f;
 		}
 		rack_output_buffer.push(outputFrame);
 	}

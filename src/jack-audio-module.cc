@@ -26,6 +26,11 @@ void JackAudioModule::step() {
 		rack_output_buffer.startIncr(inLen);
 		jack_output_buffer.endIncr(outLen);
 	}
+
+	if (jack_output_buffer.size() > (g_jack_buffersize * 8)) {
+		std::unique_lock<std::mutex> lock(jmutex);
+		g_jack_cv.wait(lock);
+	}
 }
 
 struct JackAudioModuleWidget : ModuleWidget {

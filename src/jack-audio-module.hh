@@ -35,9 +35,10 @@ struct JackAudioModule : Module {
 	// in rack's sample rate
 	DoubleRingBuffer<Frame<AUDIO_INPUTS>, 16> rack_input_buffer;
 	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, 16> rack_output_buffer;
-	DoubleRingBuffer<Frame<AUDIO_INPUTS>, 8192> jack_input_buffer;
-	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, 8192> jack_output_buffer;
+	DoubleRingBuffer<Frame<AUDIO_INPUTS>, (1<<15)> jack_input_buffer;
+	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
 
+	std::mutex jmutex;
 	jack_port_t* jport;
 
 	JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {

@@ -37,7 +37,8 @@ int on_jack_process(jack_nframes_t nframes, void *arg) {
 		if (available > 0) {
 			jack_default_audio_sample_t* out_buffer =
 				reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport, available));
-			for (jack_nframes_t i = 0; i < available; i++) {
+			jack_nframes_t i = 0;
+			for (; i < available && i < nframes; i++) {
 				Frame<AUDIO_OUTPUTS> output_frame = module->jack_output_buffer.data[module->jack_output_buffer.mask(module->jack_output_buffer.start+i)];
 				out_buffer[i] = output_frame.samples[0];
 			}
@@ -46,9 +47,6 @@ int on_jack_process(jack_nframes_t nframes, void *arg) {
 			// XXX could be a memset
 			jack_default_audio_sample_t* out_buffer =
 				reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport, nframes));
-			for (jack_nframes_t i = 0; i < nframes; i++) {
-				out_buffer[i] = 0;
-			}
 		}
 	}
 

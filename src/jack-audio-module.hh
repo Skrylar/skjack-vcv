@@ -4,8 +4,8 @@
 #include "dsp/resampler.hpp"
 #include "dsp/ringbuffer.hpp"
 
-#define AUDIO_OUTPUTS 8
-#define AUDIO_INPUTS 8
+#define AUDIO_OUTPUTS 4
+#define AUDIO_INPUTS 4
 
 struct JackAudioModule : Module {
 	enum ParamIds {

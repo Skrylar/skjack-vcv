@@ -6,6 +6,7 @@
 
 #define AUDIO_OUTPUTS 4
 #define AUDIO_INPUTS 4
+#define JACK_PORTS (AUDIO_OUTPUTS + AUDIO_INPUTS)
 
 struct JackAudioModule : Module {
 	enum ParamIds {
@@ -39,14 +40,17 @@ struct JackAudioModule : Module {
 	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
 
 	std::mutex jmutex;
-	jack_port_t* jport;
+	jack_port_t* jport[JACK_PORTS];
 
 	JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
 		/* use the pointer to ourselves as a random unique port name;
 		   TODO: persist this name to json when asked, and rename the port when loading the json */
 		char port_name[128];
-		snprintf(reinterpret_cast<char*>(&port_name), 128, "%p", reinterpret_cast<void*>(this));
-		jport = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+
+		for (int i = 0; i < JACK_PORTS; i++) {
+			snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
+			jport[i] = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, (i < AUDIO_OUTPUTS ? JackPortIsOutput : 0), 0);
+		}
 
 		inputSrc.setChannels(AUDIO_INPUT);
 		outputSrc.setChannels(AUDIO_OUTPUT);

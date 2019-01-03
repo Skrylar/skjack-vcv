@@ -35,12 +35,16 @@ int on_jack_process(jack_nframes_t nframes, void *arg) {
 
 		auto available = module->jack_output_buffer.size();
 		if (available >= nframes) {
-			jack_default_audio_sample_t* out_buffer =
-				reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport, nframes));
-			//memset(out_buffer, 0, sizeof(jack_default_audio_sample_t) * nframes);
+			jack_default_audio_sample_t* jack_buffer[JACK_PORTS];
+			for (int i = 0; i < JACK_PORTS; i++) {
+				jack_buffer[i] = reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport[i], nframes));
+			}
+
 			const Frame<AUDIO_OUTPUTS>* output_frames = module->jack_output_buffer.startData();
 			for (jack_nframes_t i = 0; i < nframes; i++) {
-				out_buffer[i] = output_frames[i].samples[0];
+				for (int j = 0; j < AUDIO_OUTPUTS; j++) {
+					jack_buffer[j][i] = output_frames[i].samples[j];
+				}
 			}
 			module->jack_output_buffer.startIncr(nframes);
 		}

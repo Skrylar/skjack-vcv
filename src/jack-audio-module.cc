@@ -96,8 +96,9 @@ JackAudioModule::~JackAudioModule() {
 		g_audio_modules.erase(x);
 
 	/* and kill our port */
-	if (jport) {
-		jack_port_unregister(g_jack_client, jport);
+	if (g_jack_client == NULL) return;
+	for (int i = 0; i < JACK_PORTS; i++) {
+		jack_port_unregister(g_jack_client, jport[i]);
 	}
 }
 

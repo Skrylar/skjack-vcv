@@ -36,7 +36,7 @@ void JackAudioModule::step() {
 
 struct JackAudioModuleWidget : ModuleWidget {
 	TextField* port_names[8];
-	
+
 	JackAudioModuleWidget(JackAudioModule *module) : ModuleWidget(module) {
 		setPanel(SVG::load(assetPlugin(plugin, "res/JackAudio.svg")));
 
@@ -86,15 +86,6 @@ struct JackAudioModuleWidget : ModuleWidget {
 		port_names[7] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 99.530807)));
 		port_names[7]->box.size = mm2px(Vec(35.0, 10.753));
 		addChild(port_names[7]);
-
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(12.524985, 54.577202)), module, JackAudioModule::INPUT_LIGHT + 0));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(35.725647, 54.577202)), module, JackAudioModule::INPUT_LIGHT + 1));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(12.524985, 69.158226)), module, JackAudioModule::INPUT_LIGHT + 2));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(35.725647, 69.158226)), module, JackAudioModule::INPUT_LIGHT + 3));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(12.524985, 91.147583)), module, JackAudioModule::OUTPUT_LIGHT + 0));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(35.725647, 91.147583)), module, JackAudioModule::OUTPUT_LIGHT + 1));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(12.524985, 107.17003)), module, JackAudioModule::OUTPUT_LIGHT + 2));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(mm2px(Vec(35.725647, 107.17003)), module, JackAudioModule::OUTPUT_LIGHT + 3));
 	}
 };
 

@@ -40,13 +40,18 @@ int on_jack_process(jack_nframes_t nframes, void *arg) {
 				jack_buffer[i] = reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport[i], nframes));
 			}
 
-			const Frame<AUDIO_OUTPUTS>* output_frames = module->jack_output_buffer.startData();
 			for (jack_nframes_t i = 0; i < nframes; i++) {
+				Frame<AUDIO_OUTPUTS> output_frame = module->jack_output_buffer.shift();
 				for (int j = 0; j < AUDIO_OUTPUTS; j++) {
-					jack_buffer[j][i] = output_frames[i].samples[j];
+					jack_buffer[j][i] = output_frame.samples[j];
 				}
+
+				Frame<AUDIO_INPUTS> input_frame;
+				for (int j = 0; j < AUDIO_INPUTS; j++) {
+					input_frame.samples[j] = jack_buffer[j+AUDIO_OUTPUTS][i];
+				}
+				module->jack_input_buffer.push(input_frame);
 			}
-			module->jack_output_buffer.startIncr(nframes);
 		}
 	}
 

@@ -47,9 +47,11 @@ struct JackAudioModule : Module {
 		   TODO: persist this name to json when asked, and rename the port when loading the json */
 		char port_name[128];
 
-		for (int i = 0; i < JACK_PORTS; i++) {
-			snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
-			jport[i] = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, (i < AUDIO_OUTPUTS ? JackPortIsOutput : 0), 0);
+		if (g_jack_client) {
+			for (int i = 0; i < JACK_PORTS; i++) {
+				snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
+				jport[i] = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput), 0);
+			}
 		}
 
 		inputSrc.setChannels(AUDIO_INPUT);

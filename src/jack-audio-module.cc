@@ -10,6 +10,22 @@ void JackAudioModule::step() {
 	inputSrc.setRates(g_jack_samplerate, sampleRate);
 	outputSrc.setRates(sampleRate, g_jack_samplerate);
 
+	// == FROM JACK TO RACK ==
+	if (rack_input_buffer.empty() && !jack_input_buffer.empty()) {
+		int inLen = jack_input_buffer.size();
+		int outLen = rack_input_buffer.capacity();
+		inputSrc.process(jack_input_buffer.startData(), &inLen, rack_input_buffer.endData(), &outLen);
+		jack_input_buffer.startIncr(inLen);
+		rack_input_buffer.endIncr(outLen);
+	}
+
+	if (!rack_input_buffer.empty()) {
+		Frame<AUDIO_OUTPUTS> input_frame = rack_input_buffer.shift();
+		for (int i = 0; i < AUDIO_INPUTS; i++) {
+			outputs[AUDIO_OUTPUT+i].value = input_frame.samples[i] * 10.0f;
+		}
+	}
+
 	// == FROM RACK TO JACK ==
 	if (!rack_output_buffer.full()) {
 		Frame<AUDIO_OUTPUTS> outputFrame;

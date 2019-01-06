@@ -1,4 +1,5 @@
 #include "jack-audio-module.hh"
+
 #include <algorithm>
 
 void JackAudioModule::step() {
@@ -50,60 +51,23 @@ void JackAudioModule::step() {
 	}
 }
 
-struct JackAudioModuleWidget : ModuleWidget {
-	TextField* port_names[8];
+JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+	/* use the pointer to ourselves as a random unique port name;
+		 TODO: persist this name to json when asked, and rename the port when loading the json */
+	char port_name[128];
 
-	JackAudioModuleWidget(JackAudioModule *module) : ModuleWidget(module) {
-		setPanel(SVG::load(assetPlugin(plugin, "res/JackAudio.svg")));
-
-		addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
-		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-		addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-		addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-
-		addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 10.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 0));
-		addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 23.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 1));
-		addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 36.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 2));
-		addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 49.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 3));
-
-		port_names[0] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 8.530807)));
-		port_names[0]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[0]);
-
-		port_names[1] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 21.530807)));
-		port_names[1]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[1]);
-
-		port_names[2] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 34.530807)));
-		port_names[2]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[2]);
-
-		port_names[3] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 47.530807)));
-		port_names[3]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[3]);
-
-		addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 62.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 0));
-		addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 75.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 1));
-		addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 88.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 2));
-		addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 101.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 3));
-
-		port_names[4] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 60.530807)));
-		port_names[4]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[4]);
-
-		port_names[5] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 73.530807)));
-		port_names[5]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[5]);
-
-		port_names[6] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 86.530807)));
-		port_names[6]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[6]);
-
-		port_names[7] = Widget::create<LedDisplayTextField>(mm2px(Vec(13.7069211, 99.530807)));
-		port_names[7]->box.size = mm2px(Vec(35.0, 10.753));
-		addChild(port_names[7]);
+	if (g_jack_client) {
+		for (int i = 0; i < JACK_PORTS; i++) {
+			snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
+			jport[i] = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput), 0);
+		}
 	}
-};
+
+	inputSrc.setChannels(AUDIO_INPUT);
+	outputSrc.setChannels(AUDIO_OUTPUT);
+
+	g_audio_modules.push_back(this);
+}
 
 JackAudioModule::~JackAudioModule() {
 	/* drop ourselves from active module list */
@@ -117,9 +81,3 @@ JackAudioModule::~JackAudioModule() {
 		jack_port_unregister(g_jack_client, jport[i]);
 	}
 }
-
-// Specify the Module and ModuleWidget subclass, human-readable
-// author name for categorization per plugin, module slug (should never
-// change), human-readable module name, and any number of tags
-// (found in `include/tags.hpp`) separated by commas.
-Model *jack_audio_module = Model::create<JackAudioModule, JackAudioModuleWidget>("SkJack", "JackAudio", "JACK Audio", EXTERNAL_TAG);

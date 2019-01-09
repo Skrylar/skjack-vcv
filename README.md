@@ -4,7 +4,7 @@ Modules are taken from VCV Core, modified to interact directly with
 JACK instead of RtAudio and also modified to support JACK-isms like
 named ports.
 
-[](module-fs8.png)
+![Annotated image of the JACK Audio module.](doc/module-fs8.png)
 
 The JACK Audio module deals with passing audio between Rack and JACK
 ports and wires. Each port can be named individually, with the supplied

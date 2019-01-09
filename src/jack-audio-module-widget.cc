@@ -1,6 +1,18 @@
 #include "jack-audio-module-widget.hh"
 #include "jack-audio-module.hh"
 
+struct JackPortLedTextField : LedDisplayTextField {
+	int managed_port;
+	JackAudioModuleWidget* master;
+
+	JackPortLedTextField() : LedDisplayTextField() {}
+
+	virtual void onTextChange() {
+		LedDisplayTextField::onTextChange();
+		master->on_port_renamed(managed_port, text);
+	}
+};
+
 JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWidget(module) {
 	setPanel(SVG::load(assetPlugin(plugin, "res/JackAudio.svg")));
 
@@ -94,7 +106,8 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 	char port_name[128];
 	for (int i = 0; i < JACK_PORTS; i++) {
 		snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
-		port_names[i]->setText(std::string(port_name));
+		// XXX using setText here would cause crashes because it would try to tell
+		port_names[i]->text = std::string(port_name);
 	}
 }
 
@@ -118,9 +131,22 @@ void JackAudioModuleWidget::fromJson(json_t* json) {
 			auto item = json_array_get(port_names, i);
 			if (json_is_string(item)) {
 				this->port_names[i]->setText(std::string(json_string_value(item), json_string_length(item)));
-				// TODO: alter port name on jack's side
 			}
 		}
+	}
+}
+
+void JackAudioModuleWidget::on_port_renamed(int port, const std::string& name) {
+	if (port < 0 || port > JACK_PORTS) return;
+	if (!g_jack_client) return;
+	auto module = reinterpret_cast<JackAudioModule*>(this->module);
+	if (!module) return;
+
+	// XXX port names must be unique per client; using a non-unique name here
+	// doesn't appear to "fail" but you do get a port with a blank name.
+	if (jack_port_rename(g_jack_client, module->jport[port], name.c_str())) {
+		debug("Changing port name failed");
+		//port_names[port]->setText(std::string(jack_port_short_name(module->jport[port])));
 	}
 }
 

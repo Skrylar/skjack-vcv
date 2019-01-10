@@ -10,6 +10,8 @@
 #include <condition_variable>
 #include <mutex>
 
+// because our users over in macOS have old jacks
+#include <jack/weakjack.h>
 #include <jack/jack.h>
 #include "rack.hpp"
 

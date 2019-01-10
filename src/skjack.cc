@@ -76,9 +76,9 @@ void init(Plugin *p) {
 	if ((g_jack_client = jack_client_open("VCV Rack", JackNoStartServer, &jstatus))) {
 		g_jack_buffersize = jack_get_buffer_size(g_jack_client);
 		g_jack_samplerate = jack_get_sample_rate(g_jack_client);
-		jack_set_buffer_size_callback(g_jack_client, &on_jack_buffer_size, NULL);
-		jack_set_sample_rate_callback(g_jack_client, &on_jack_sample_rate, NULL);
-		jack_set_process_callback(g_jack_client, &on_jack_process, NULL);
-		jack_activate(g_jack_client);
+		if (jack_set_buffer_size_callback) jack_set_buffer_size_callback(g_jack_client, &on_jack_buffer_size, NULL);
+		if (jack_set_sample_rate_callback) jack_set_sample_rate_callback(g_jack_client, &on_jack_sample_rate, NULL);
+		if (jack_set_process_callback) jack_set_process_callback(g_jack_client, &on_jack_process, NULL);
+		if (jack_activate) jack_activate(g_jack_client);
 	}
 }

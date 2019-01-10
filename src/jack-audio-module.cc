@@ -3,7 +3,6 @@
 #include <algorithm>
 
 void JackAudioModule::step() {
-	if (!jport) return;
 	if (!g_jack_client) return;
 
 	// == PREPARE SAMPLE RATE STUFF ==

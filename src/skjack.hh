@@ -19,7 +19,7 @@
 
 using namespace rack;
 
-class JackAudioModule;
+struct JackAudioModule;
 
 extern std::condition_variable g_jack_cv;
 

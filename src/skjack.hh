@@ -1,17 +1,25 @@
 #pragma once
 
+// we don't control these, so don't complain to me about them
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weverything"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+
 #include <vector>
+#include <condition_variable>
+#include <mutex>
 
 #include <jack/jack.h>
-
 #include "rack.hpp"
+
+// re-entering our zone of concern
+#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 
 using namespace rack;
 
 class JackAudioModule;
-
-#include <condition_variable>
-#include <mutex>
 
 extern std::condition_variable g_jack_cv;
 

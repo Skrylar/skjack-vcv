@@ -6,8 +6,8 @@ jack = dependency('jack', required: true)
 
 add_project_arguments(['-DSLUG=' + slug, '-DVERSION=' + meson.project_version(), '-DARCH_LIN=1'], language: 'cpp')
 
-add_project_arguments(['-g'], language: 'c')
-add_project_arguments(['-g'], language: 'cpp')
+add_project_arguments(['-Wall', '-Wextra', '-std=c++11', '-pedantic', '-g'], language: 'c')
+add_project_arguments(['-Wall', '-Wextra', '-std=c++11', '-pedantic', '-g'], language: 'cpp')
 
 # TODO: swap this with a subproject reference once we subordinate rack to a workspace
 rack_include = include_directories('/opt/rack/include')

@@ -13,17 +13,17 @@ std::condition_variable g_jack_cv;
 // after creating or destroying a module...
 std::vector<JackAudioModule*> g_audio_modules;
 
-int on_jack_buffer_size(jack_nframes_t nframes, void *arg) {
+int on_jack_buffer_size(jack_nframes_t nframes, void *) {
 	g_jack_buffersize = nframes;
 	return 0;
 }
 
-int on_jack_sample_rate(jack_nframes_t nframes, void *arg) {
+int on_jack_sample_rate(jack_nframes_t nframes, void *) {
 	g_jack_samplerate = nframes;
 	return 0;
 }
 
-int on_jack_process(jack_nframes_t nframes, void *arg) {
+int on_jack_process(jack_nframes_t nframes, void *) {
 	for (auto itr = g_audio_modules.begin();
       itr != g_audio_modules.end();
       itr++)
@@ -31,7 +31,7 @@ int on_jack_process(jack_nframes_t nframes, void *arg) {
 		auto module = *itr;
 
 		/* basic sanity tests */
-		if (!module->jport) continue;
+		if (!g_jack_client) continue;
 
 		auto available = module->jack_output_buffer.size();
 		if (available >= nframes) {

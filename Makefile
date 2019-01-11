@@ -16,7 +16,9 @@ CXXFLAGS +=
 
 # Careful about linking to shared libraries, since you can't assume much about the user's environment and library search path.
 # Static libraries are fine.
-LDFLAGS += $(pkg-config --libs jack)
+
+# NOTE: we explicitly don't link to jack anymore; we're using dlopen/dlsym to grab it at runtime
+LDFLAGS +=
 
 # Add .cpp and .c files to the build
 SOURCES += $(wildcard src/*.cc)

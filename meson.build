@@ -9,6 +9,8 @@ add_project_arguments(['-DSLUG=' + slug, '-DVERSION=' + meson.project_version(),
 add_project_arguments(['-Wall', '-Wextra', '-std=c++11', '-pedantic', '-g'], language: 'c')
 add_project_arguments(['-Wall', '-Wextra', '-std=c++11', '-pedantic', '-g'], language: 'cpp')
 
+add_project_link_arguments(['-ldl'], language: 'cpp')
+
 # TODO: swap this with a subproject reference once we subordinate rack to a workspace
 rack_include = include_directories('/opt/rack/include')
 

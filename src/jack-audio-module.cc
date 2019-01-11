@@ -3,12 +3,12 @@
 #include <algorithm>
 
 void JackAudioModule::step() {
-	if (!g_jack_client) return;
+	if (!g_jack_client.alive()) return;
 
 	// == PREPARE SAMPLE RATE STUFF ==
 	int sampleRate = (int) engineGetSampleRate();
-	inputSrc.setRates(g_jack_samplerate, sampleRate);
-	outputSrc.setRates(sampleRate, g_jack_samplerate);
+	inputSrc.setRates(g_jack_client.samplerate, sampleRate);
+	outputSrc.setRates(sampleRate, g_jack_client.samplerate);
 
 	// == FROM JACK TO RACK ==
 	if (rack_input_buffer.empty() && !jack_input_buffer.empty()) {
@@ -44,7 +44,7 @@ void JackAudioModule::step() {
 	}
 
 	// TODO: consider capping this? although an overflow here doesn't cause crashes...
-	if (jack_output_buffer.size() > (g_jack_buffersize * 8)) {
+	if (jack_output_buffer.size() > (g_jack_client.buffersize * 8)) {
 		std::unique_lock<std::mutex> lock(jmutex);
 		g_jack_cv.wait(lock);
 	}
@@ -55,10 +55,13 @@ JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS,
 		 TODO: persist this name to json when asked, and rename the port when loading the json */
 	char port_name[128];
 
-	if (g_jack_client) {
+	if (g_jack_client.alive()) {
 		for (int i = 0; i < JACK_PORTS; i++) {
 			snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
-			jport[i] = jack_port_register(g_jack_client, reinterpret_cast<const char*>(&port_name), JACK_DEFAULT_AUDIO_TYPE, (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput), 0);
+			jport[i].register_audio(
+				g_jack_client,
+				reinterpret_cast<const char*>(&port_name),
+				(i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput));
 		}
 	}
 
@@ -75,8 +78,8 @@ JackAudioModule::~JackAudioModule() {
 		g_audio_modules.erase(x);
 
 	/* and kill our port */
-	if (g_jack_client == NULL) return;
+	if (!g_jack_client.alive()) return;
 	for (int i = 0; i < JACK_PORTS; i++) {
-		jack_port_unregister(g_jack_client, jport[i]);
+		jport[i].unregister();
 	}
 }

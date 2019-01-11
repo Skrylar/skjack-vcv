@@ -40,7 +40,7 @@ struct JackAudioModule : Module {
 	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
 
 	std::mutex jmutex;
-	jack_port_t* jport[JACK_PORTS];
+	jaq::port jport[JACK_PORTS];
 
 	JackAudioModule();
 

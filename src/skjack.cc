@@ -2,9 +2,7 @@
 #include "jack-audio-module.hh"
 
 Plugin *plugin;
-jack_client_t* g_jack_client;
-jack_nframes_t g_jack_buffersize;
-jack_nframes_t g_jack_samplerate;
+jaq::client g_jack_client;
 std::condition_variable g_jack_cv;
 
 // TODO: consider protecting this with a mutex
@@ -13,31 +11,20 @@ std::condition_variable g_jack_cv;
 // after creating or destroying a module...
 std::vector<JackAudioModule*> g_audio_modules;
 
-int on_jack_buffer_size(jack_nframes_t nframes, void *) {
-	g_jack_buffersize = nframes;
-	return 0;
-}
-
-int on_jack_sample_rate(jack_nframes_t nframes, void *) {
-	g_jack_samplerate = nframes;
-	return 0;
-}
-
 int on_jack_process(jack_nframes_t nframes, void *) {
+	if (!g_jack_client.alive()) return 1;
+
 	for (auto itr = g_audio_modules.begin();
       itr != g_audio_modules.end();
       itr++)
 	{
 		auto module = *itr;
 
-		/* basic sanity tests */
-		if (!g_jack_client) continue;
-
 		auto available = module->jack_output_buffer.size();
 		if (available >= nframes) {
 			jack_default_audio_sample_t* jack_buffer[JACK_PORTS];
 			for (int i = 0; i < JACK_PORTS; i++) {
-				jack_buffer[i] = reinterpret_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(module->jport[i], nframes));
+				jack_buffer[i] = module->jport[i].get_audio_buffer(nframes);
 			}
 
 			for (jack_nframes_t i = 0; i < nframes; i++) {
@@ -72,13 +59,9 @@ void init(Plugin *p) {
 
 	/* prep a client object that will last the lifetime of the app;
 	 * this is fine because individual modules will open ports belonging to us */
-	jack_status_t jstatus;
-	if ((g_jack_client = jack_client_open("VCV Rack", JackNoStartServer, &jstatus))) {
-		g_jack_buffersize = jack_get_buffer_size(g_jack_client);
-		g_jack_samplerate = jack_get_sample_rate(g_jack_client);
-		if (jack_set_buffer_size_callback) jack_set_buffer_size_callback(g_jack_client, &on_jack_buffer_size, NULL);
-		if (jack_set_sample_rate_callback) jack_set_sample_rate_callback(g_jack_client, &on_jack_sample_rate, NULL);
-		if (jack_set_process_callback) jack_set_process_callback(g_jack_client, &on_jack_process, NULL);
-		if (jack_activate) jack_activate(g_jack_client);
+
+	if (jaq::client::link() && g_jack_client.open()) {
+		g_jack_client.set_process_callback(&on_jack_process, NULL);
+		g_jack_client.activate();
 	}
 }

@@ -15,7 +15,8 @@ rack_include = include_directories('/opt/rack/include')
 shared_module('plugin', [
 'src/jack-audio-module.cc',
 'src/jack-audio-module-widget.cc',
-'src/skjack.cc'],
+'src/skjack.cc',
+'src/jaq.cc'],
 name_prefix: '',
 install: true,
 install_dir: '.',

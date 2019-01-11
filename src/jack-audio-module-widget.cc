@@ -138,13 +138,13 @@ void JackAudioModuleWidget::fromJson(json_t* json) {
 
 void JackAudioModuleWidget::on_port_renamed(int port, const std::string& name) {
 	if (port < 0 || port > JACK_PORTS) return;
-	if (!g_jack_client) return;
+	if (!g_jack_client.alive()) return;
 	auto module = reinterpret_cast<JackAudioModule*>(this->module);
 	if (!module) return;
 
 	// XXX port names must be unique per client; using a non-unique name here
 	// doesn't appear to "fail" but you do get a port with a blank name.
-	if (jack_port_rename(g_jack_client, module->jport[port], name.c_str())) {
+	if (!module->jport[port].rename(name)) {
 		debug("Changing port name failed");
 		//port_names[port]->setText(std::string(jack_port_short_name(module->jport[port])));
 	}

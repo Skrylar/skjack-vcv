@@ -3,6 +3,7 @@
 #include "skjack.hh"
 #include "dsp/resampler.hpp"
 #include "dsp/ringbuffer.hpp"
+#include "sr-latch.hh"
 
 #define AUDIO_OUTPUTS 4
 #define AUDIO_INPUTS 4
@@ -26,6 +27,8 @@ struct JackAudioModule : Module {
 		NUM_LIGHTS
 	};
 
+	sr_latch output_latch;
+
 	int lastSampleRate = 0;
 	int lastNumOutputs = -1;
 	int lastNumInputs = -1;
@@ -45,6 +48,10 @@ struct JackAudioModule : Module {
 	JackAudioModule();
 
 	virtual ~JackAudioModule();
+
+	void wipe_buffers();
+	void globally_register();
+	void globally_unregister();
 
 	void step() override;
 };

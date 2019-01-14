@@ -45,12 +45,20 @@ void JackAudioModule::step() {
 
 	// TODO: consider capping this? although an overflow here doesn't cause crashes...
 	if (jack_output_buffer.size() > (g_jack_client.buffersize * 8)) {
-		std::unique_lock<std::mutex> lock(jmutex);
-		g_jack_cv.wait(lock);
+		// we're over half capacity, so set our output latch
+		if (output_latch.try_set()) {
+			g_audio_blocked++;
+		}
+
+		// if everyone is output latched, stall Rack
+		if (g_audio_blocked >= g_audio_modules.size()) {
+			std::unique_lock<std::mutex> lock(jmutex);
+			g_jack_cv.wait(lock);
+		}
 	}
 }
 
-JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS), output_latch() {
 	/* use the pointer to ourselves as a random unique port name;
 		 TODO: persist this name to json when asked, and rename the port when loading the json */
 	char port_name[128];
@@ -68,15 +76,36 @@ JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS,
 	inputSrc.setChannels(AUDIO_INPUT);
 	outputSrc.setChannels(AUDIO_OUTPUT);
 
-	g_audio_modules.push_back(this);
+	globally_register();
 }
 
-JackAudioModule::~JackAudioModule() {
+void JackAudioModule::wipe_buffers() {
+	rack_input_buffer.clear();
+	rack_output_buffer.clear();
+	jack_input_buffer.clear();
+	jack_output_buffer.clear();
+}
+
+void JackAudioModule::globally_register() {
+	g_audio_modules.push_back(this);
+
+	/* ensure modules are not filling up their buffers out of sync */
+	for (auto itr = g_audio_modules.begin();
+			 itr != g_audio_modules.end();
+		 	 itr++)
+	{
+		(*itr)->wipe_buffers();
+	}
+}
+
+void JackAudioModule::globally_unregister() {
 	/* drop ourselves from active module list */
 	auto x = std::find(g_audio_modules.begin(), g_audio_modules.end(), this);
 	if (x != g_audio_modules.end())
 		g_audio_modules.erase(x);
+}
 
+JackAudioModule::~JackAudioModule() {
 	/* and kill our port */
 	if (!g_jack_client.alive()) return;
 	for (int i = 0; i < JACK_PORTS; i++) {

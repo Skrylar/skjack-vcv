@@ -10,6 +10,7 @@ std::condition_variable g_jack_cv;
 // very infrequently and nobody cares if we miss one or two audio frames right
 // after creating or destroying a module...
 std::vector<JackAudioModule*> g_audio_modules;
+std::atomic<unsigned int> g_audio_blocked(0);
 
 int on_jack_process(jack_nframes_t nframes, void *) {
 	if (!g_jack_client.alive()) return 1;
@@ -39,9 +40,12 @@ int on_jack_process(jack_nframes_t nframes, void *) {
 				}
 				module->jack_input_buffer.push(input_frame);
 			}
+
+			module->output_latch.reset();
 		}
 	}
 
+	g_audio_blocked = 0;
 	g_jack_cv.notify_all();
 	return 0;
 }

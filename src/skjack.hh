@@ -28,6 +28,7 @@ extern std::condition_variable g_jack_cv;
 extern jaq::client g_jack_client;
 
 extern std::vector<JackAudioModule*> g_audio_modules;
+extern std::atomic<unsigned int> g_audio_blocked;
 
 // Forward-declare the Plugin, defined in skjack.cc
 extern Plugin *plugin;

@@ -27,6 +27,7 @@ extern std::condition_variable g_jack_cv;
 // We'll be using this from here on out.
 extern jaq::client g_jack_client;
 
+extern std::mutex g_audio_modules_mutex;
 extern std::vector<JackAudioModule*> g_audio_modules;
 extern std::atomic<unsigned int> g_audio_blocked;
 

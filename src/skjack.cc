@@ -9,11 +9,14 @@ std::condition_variable g_jack_cv;
 // this would be optimal for correctness, but in practice this gets modified
 // very infrequently and nobody cares if we miss one or two audio frames right
 // after creating or destroying a module...
+std::mutex g_audio_modules_mutex;
 std::vector<JackAudioModule*> g_audio_modules;
 std::atomic<unsigned int> g_audio_blocked(0);
 
 int on_jack_process(jack_nframes_t nframes, void *) {
 	if (!g_jack_client.alive()) return 1;
+	/* audio modules vector is blocked; we have to skip this cycle */
+	if (!g_audio_modules_mutex.try_lock()) return 0;
 
 	for (auto itr = g_audio_modules.begin();
       itr != g_audio_modules.end();
@@ -46,6 +49,8 @@ int on_jack_process(jack_nframes_t nframes, void *) {
 	}
 
 	g_audio_blocked = 0;
+	g_audio_modules_mutex.unlock();
+
 	g_jack_cv.notify_all();
 	return 0;
 }

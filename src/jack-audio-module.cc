@@ -87,6 +87,8 @@ void JackAudioModule::wipe_buffers() {
 }
 
 void JackAudioModule::globally_register() {
+	std::unique_lock<std::mutex> lock(g_audio_modules_mutex);
+
 	g_audio_modules.push_back(this);
 
 	/* ensure modules are not filling up their buffers out of sync */
@@ -99,6 +101,8 @@ void JackAudioModule::globally_register() {
 }
 
 void JackAudioModule::globally_unregister() {
+	std::unique_lock<std::mutex> lock(g_audio_modules_mutex);
+
 	/* drop ourselves from active module list */
 	auto x = std::find(g_audio_modules.begin(), g_audio_modules.end(), this);
 	if (x != g_audio_modules.end())

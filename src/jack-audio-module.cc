@@ -110,6 +110,8 @@ void JackAudioModule::globally_unregister() {
 }
 
 JackAudioModule::~JackAudioModule() {
+	globally_unregister();
+	
 	/* and kill our port */
 	if (!g_jack_client.alive()) return;
 	for (int i = 0; i < JACK_PORTS; i++) {

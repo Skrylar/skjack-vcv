@@ -58,7 +58,7 @@ void JackAudioModule::step() {
 	}
 }
 
-JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS), output_latch() {
+JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS), output_latch(), inputSrc(), outputSrc() {
 	/* use the pointer to ourselves as a random unique port name;
 		 TODO: persist this name to json when asked, and rename the port when loading the json */
 	char port_name[128];
@@ -73,8 +73,8 @@ JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS,
 		}
 	}
 
-	inputSrc.setChannels(AUDIO_INPUT);
-	outputSrc.setChannels(AUDIO_OUTPUT);
+	inputSrc.setChannels(AUDIO_INPUTS);
+	outputSrc.setChannels(AUDIO_OUTPUTS);
 
 	globally_register();
 }

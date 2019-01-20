@@ -1,4 +1,5 @@
 #include "jack-audio-module.hh"
+#include "hashids.hh"
 
 #include <algorithm>
 
@@ -64,13 +65,22 @@ JackAudioModule::JackAudioModule() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS,
 	char port_name[128];
 
 	if (g_jack_client.alive()) {
-		for (int i = 0; i < JACK_PORTS; i++) {
-			snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
-			jport[i].register_audio(
-				g_jack_client,
-				reinterpret_cast<const char*>(&port_name),
-				(i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput));
-		}
+	  hashidsxx::Hashids hash("grilled cheese sandwiches");
+	  std::string id = hash.encode(reinterpret_cast<size_t>(this));
+
+	  for (int i = 0; i < JACK_PORTS; i++) {	  
+	    snprintf
+	      (reinterpret_cast<char*>(&port_name),
+	       128,
+	       "%s:%d",
+	       id.c_str(),
+	       i);
+	    
+	    jport[i].register_audio
+	      (g_jack_client,
+	       reinterpret_cast<const char*>(&port_name),
+	       (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput));
+	  }
 	}
 
 	inputSrc.setChannels(AUDIO_INPUTS);

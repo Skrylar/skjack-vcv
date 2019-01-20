@@ -1,5 +1,6 @@
 #include "jack-audio-module-widget.hh"
 #include "jack-audio-module.hh"
+#include "hashids.hh"
 
 struct JackPortLedTextField : LedDisplayTextField {
 	int managed_port;
@@ -104,10 +105,13 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 	}
 
 	char port_name[128];
+	hashidsxx::Hashids hash("grilled cheese sandwiches");
+	std::string id = hash.encode(reinterpret_cast<size_t>(module));
+	
 	for (int i = 0; i < JACK_PORTS; i++) {
-		snprintf(reinterpret_cast<char*>(&port_name), 128, "%p:%d", reinterpret_cast<void*>(this), i);
-		// XXX using setText here would cause crashes because it would try to tell
-		port_names[i]->text = std::string(port_name);
+	  snprintf(reinterpret_cast<char*>(&port_name), 128, "%s:%d", id.c_str(), i);
+	  // XXX using setText here would cause crashes because it would try to tell
+	  port_names[i]->text = std::string(port_name);
 	}
 }
 

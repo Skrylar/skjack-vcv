@@ -1,0 +1,38 @@
+
+This plugin aims to bring first class support for the JACK Audio
+Connection Kit to VCV Rack.
+
+* Modules
+** JACK Audio
+
+#+CAPTION: Annotated image of the JACK Audio module.
+[[doc/module-fs8.png]]
+
+- There are four input and four output ports.
+- Output ports are marked with an off-color accent.
+- Each port may be named individually, and the name supplied in Rack
+  will appear in your JACK patch bay.
+- Each name must be unique across an entire Rack instance.
+- If four ports are not enough, simply add more to a patch. Each
+  module will create four input and output ports. All modules
+  cooperate to ensure that audio is sent and received through JACK in
+  lockstep (you can consult the power meter to see that only one of
+  the JACK Audio modules will stall Rack.)
+
+Note that Rack works on a per-sample basis, and JACK works on a
+per-batch basis. We also do not convey latency information to JACK
+currently. This means you will notice a delay from audio signals that
+do not pass through Rack from signals that do.
+
+*** TODO Latency information
+JACK supports reporting the latency of a client, ostensibly to help
+other clients match up with one another and prevent sample delays. We
+currently do not report latency information to JACK.
+
+*** TODO Combining with other Audio Modules
+There are known issues combining JACK Audio with other Audio plugins,
+such as from Fundamental or the Audio16 module from RMS. 
+
+** TODO Clock
+
+** TODO MIDI

@@ -2,7 +2,8 @@
 
 // we don't control these, so don't complain to me about them
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Weverything"
+#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wextra"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
 

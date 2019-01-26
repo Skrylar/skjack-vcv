@@ -66,25 +66,34 @@ int client::on_jack_sample_rate(jack_nframes_t nframes, void* dptr) {
 #define PARTY_HAT_SUFFIX ".so.0"
 #elif ARCH_MAC
 #define PARTY_HAT_SUFFIX ".dylib"
+#elif ARCH_WIN
+#define PARTY_HAT_SUFFIX "64.dll"
 #else
 #error "Your platform is not yet supported :("
 #endif
 
 bool client::link() {
   lib = dlopen("libjack" PARTY_HAT_SUFFIX, RTLD_LAZY);
+
+#ifndef ARCH_WIN
   if (!lib) {
     warn("libjack" PARTY_HAT_SUFFIX " is not in linker path!");
     lib = dlopen("/usr/lib/libjack" PARTY_HAT_SUFFIX, RTLD_LAZY);
     if (!lib) {
       warn("/usr/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
       lib = dlopen("/usr/lib/libjack" PARTY_HAT_SUFFIX, RTLD_LAZY);
+#endif
       if (!lib) {
+#ifndef ARCH_WIN
         warn("/usr/local/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
+#endif
         warn("I can't find any JACKs.");
         return false;
       }
+#ifndef ARCH_WIN
     }
   }
+#endif
 
   info("We linked to JACK :^)");
 

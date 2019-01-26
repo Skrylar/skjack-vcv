@@ -5,7 +5,7 @@
 #else
 #include <windows.h>
 #define dlopen(x, y) LoadLibraryA(x)
-#define dlsym(x, y) GetProcAddressA(x, y)
+#define dlsym(x, y) GetProcAddress(x, y)
 #endif
 
 namespace jaq {

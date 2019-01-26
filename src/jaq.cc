@@ -1,6 +1,12 @@
 #include "skjack.hh"
 
+#ifndef ARCH_WIN
 #include <dlfcn.h>
+#else
+#include <windows.h>
+#define dlopen(x, y) LoadLibraryA(x)
+#define dlsym(x, y) GetProcAddressA(x, y)
+#endif
 
 namespace jaq {
 

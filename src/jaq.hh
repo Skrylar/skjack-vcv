@@ -8,7 +8,7 @@
 #pragma clang diagnostic ignored "-Weverything"
 
 #include <string>
-#include <jack/jack.h>
+#include "jack/jack.h"
 
 // re-entering our zone of concern
 #pragma GCC diagnostic pop

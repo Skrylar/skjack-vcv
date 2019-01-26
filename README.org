@@ -34,5 +34,20 @@ There are known issues combining JACK Audio with other Audio plugins,
 such as from Fundamental or the Audio16 module from RMS. 
 
 ** TODO Clock
-
 ** TODO MIDI
+
+* Licenses
+
+** Graphics
+The (upcoming) enhanced graphics were designed by github user
+[[https://github.com/infamedavid][@infamedavid (David Rodriguez)]], and are available via CC-BY.
+
+** SkJACK
+This plugin is made available under BSD-3.
+
+** JACK
+A copy of the JACK client headers are included under =src/jack=, which
+are made available to us under the LGPL license.
+
+We have included them because it primarily simplifies compiling the
+plugin on Windows (MinGW2) targets.

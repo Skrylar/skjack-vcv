@@ -115,6 +115,9 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 	}
 }
 
+JackAudioModuleWidget::~JackAudioModuleWidget() {
+}
+
 json_t* JackAudioModuleWidget::toJson() {
 	auto map = ModuleWidget::toJson();
 	auto port_names = json_array();

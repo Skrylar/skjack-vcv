@@ -1,6 +1,7 @@
 #include "jack-audio-module-widget.hh"
 #include "jack-audio-module.hh"
 #include "hashids.hh"
+#include "components.hh"
 
 struct JackPortLedTextField : LedDisplayTextField {
 	int managed_port;
@@ -22,10 +23,10 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 	addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 	addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-	addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 10.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 0));
-	addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 23.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 1));
-	addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 36.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 2));
-	addInput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 49.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 3));
+	addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 10.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 0));
+	addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 23.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 1));
+	addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 36.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 2));
+	addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 49.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 3));
 
 	{
 		port_names[0] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 8.530807)));
@@ -63,10 +64,10 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 		addChild(self);
 	}
 
-	addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 62.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 0));
-	addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 75.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 1));
-	addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 88.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 2));
-	addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.7069211, 101.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 3));
+	addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 62.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 0));
+	addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 75.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 1));
+	addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 88.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 2));
+	addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 101.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 3));
 
 	{
 		port_names[4] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 60.530807)));

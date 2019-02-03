@@ -8,30 +8,48 @@ Connection Kit to VCV Rack.
 #+CAPTION: Annotated image of the JACK Audio module.
 [[doc/module-fs8.png]]
 
-- There are four input and four output ports.
-- Output ports are marked with an off-color accent.
-- Each port may be named individually, and the name supplied in Rack
-  will appear in your JACK patch bay.
-- Each name must be unique across an entire Rack instance.
-- If four ports are not enough, simply add more to a patch. Each
-  module will create four input and output ports. All modules
-  cooperate to ensure that audio is sent and received through JACK in
-  lockstep (you can consult the power meter to see that only one of
-  the JACK Audio modules will stall Rack.)
-
-Note that Rack works on a per-sample basis, and JACK works on a
-per-batch basis. We also do not convey latency information to JACK
-currently. This means you will notice a delay from audio signals that
-do not pass through Rack from signals that do.
+ - There are four input and four output ports.
+ - Output ports are marked with an off-color accent.
+ - Each port may be named individually, and the name supplied in Rack
+   will appear in your JACK patch bay.
+ - Each name must be unique across an entire Rack instance.
+ - If four ports are not enough, simply add more to a patch. Each
+   module will create four input and output ports. All modules
+   cooperate to ensure that audio is sent and received through JACK in
+   lockstep (you can consult the power meter to see that only one of
+   the JACK Audio modules will stall Rack.)
 
 *** TODO Latency information
-JACK supports reporting the latency of a client, ostensibly to help
-other clients match up with one another and prevent sample delays. We
-currently do not report latency information to JACK.
+We do not currently calculate the delay from the time audio might
+enter Rack and leave it again. This means we don't tell JACK how much
+time we expect to take, and so it cannot perform any delay
+compensation.
 
-*** TODO Combining with other Audio Modules
-There are known issues combining JACK Audio with other Audio plugins,
-such as from Fundamental or the Audio16 module from RMS. 
+If you try to play an input stream in to Rack, and simultaneously to a
+monitor, you will hear a short delay effect as the two signals are not
+correctly synchronized. There may also be issues trying to synchronize
+audio between separate running instances of Rack.
+
+These issues should only give you trouble for relatively advanced JACK
+patches. They have no effect on the default use case of a single Rack
+instance generating sound on its own and sending them to =Ardour= or
+=non mixer= for recording or out-of-Rack effects processing.
+
+*** Clashes with Core and rcm
+On some systems JACK will take control of the audio device (on Linux,
+it takes over your ALSA sound card.) Trying to have both JACK and Rack
+connect to ALSA will result in performance issues or possibly
+crashes.
+
+It is advisable that you delete any =Audio= modules from =Core= or any
+=Audio 16= modules from =rcm= when working with JACK. It is possible
+to leave them in a patch unused, but trying to delete them while a
+JACK server is running (even if you don't have SkJACK installed!) **can
+and will result in sadness of the crashing variety.**
+
+JACK modules do not have this problem in reverse. If SkJACK is
+installed and JACK is not, or a JACK server is not running, the
+modules will silently do nothing.
 
 ** TODO Clock
 ** TODO MIDI
@@ -39,8 +57,11 @@ such as from Fundamental or the Audio16 module from RMS.
 * Licenses
 
 ** Graphics
-The (upcoming) enhanced graphics were designed by github user
+The module graphics template was designed by github user
 [[https://github.com/infamedavid][@infamedavid (David Rodriguez)]], and are available via CC-BY.
+
+** 3270 Font
+The [[https://github.com/rbanffy/3270font][3270 terminal font]] is used under the BSD-3 license.
 
 ** SkJACK
 This plugin is made available under BSD-3.

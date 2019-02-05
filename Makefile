@@ -10,7 +10,7 @@ SLUG = SkJack
 VERSION = 0.6.6-pre
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += $(pkg-config --cflags jack)
+FLAGS += -Isrc
 CFLAGS +=
 CXXFLAGS +=
 

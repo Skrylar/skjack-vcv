@@ -4,8 +4,9 @@
 #include <dlfcn.h>
 #else
 #include <windows.h>
-#define dlopen(x, y) LoadLibraryA(x)
-#define dlsym(x, y) GetProcAddress(x, y)
+#define dlopen(x, y) reinterpret_cast<void*>(LoadLibraryA(x))
+#define dlsym(x, y) GetProcAddress(reinterpret_cast<HMODULE>(x), y)
+#define dlclose(x) FreeLibrary(reinterpret_cast<HMODULE>(x))
 #endif
 
 namespace jaq {

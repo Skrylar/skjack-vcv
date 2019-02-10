@@ -61,95 +61,57 @@ struct JackPortLedTextField : public LedDisplayTextField {
    }
 };
 
+#define def_port_label(id, x, y) {					\
+   port_names[id] = Widget::create<JackPortLedTextField>(mm2px(Vec(x, y))); \
+   auto self = reinterpret_cast<JackPortLedTextField*>(port_names[0]);	\
+   self->managed_port = 0;						\
+   self->master = this;							\
+   self->box.size = mm2px(Vec(35.0, 10.753));				\
+   addChild(self);							\
+}
+
+#define def_input(id, x, y) addInput					\
+   (Port::create<DavidLTPort>						\
+    (mm2px(Vec(x, y)),							\
+     Port::INPUT, module, JackAudioModule::AUDIO_INPUT + id));
+
+#define def_output(id, x, y) addOutput					\
+   (Port::create<DavidLTPort>						\
+    (mm2px(Vec(x, y)),							\
+     Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + id));
+
 JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWidget(module) {
    setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB.svg")));
 
-   addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-   addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
+		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-   addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 10.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 0));
-   addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 23.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 1));
-   addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 36.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 2));
-   addInput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 49.530807)), Port::INPUT, module, JackAudioModule::AUDIO_INPUT + 3));
+   def_input(0, 3.7069211, 10.530807);
+   def_input(1, 3.7069211, 23.530807);
+   def_input(2, 3.7069211, 36.530807);
+   def_input(3, 3.7069211, 49.530807);
 
-   {
-      port_names[0] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 8.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[0]);
-      self->managed_port = 0;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
+   def_port_label(0, 13.7069211, 8.530807);
+   def_port_label(1, 13.7069211, 21.530807);
+   def_port_label(2, 13.7069211, 34.530807);
+   def_port_label(3, 13.7069211, 47.530807);
 
-   {
-      port_names[1] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 21.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[1]);
-      self->managed_port = 1;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
+   def_output(0, 3.7069211, 62.143906);
+   def_output(1, 3.7069211, 75.143906);
+   def_output(2, 3.7069211, 88.143906);
+   def_output(3, 3.7069211, 101.143906);
 
-   {
-      port_names[2] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 34.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[2]);
-      self->managed_port = 2;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
-
-   {
-      port_names[3] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 47.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[3]);
-      self->managed_port = 3;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
-
-   addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 62.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 0));
-   addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 75.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 1));
-   addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 88.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 2));
-   addOutput(Port::create<DavidLTPort>(mm2px(Vec(3.7069211, 101.143906)), Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + 3));
-
-   {
-      port_names[4] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 60.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[4]);
-      self->managed_port = 4;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
-
-   {
-      port_names[5] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 73.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[5]);
-      self->managed_port = 5;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
-
-   {
-      port_names[6] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 86.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[6]);
-      self->managed_port = 6;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
-
-   {
-      port_names[7] = Widget::create<JackPortLedTextField>(mm2px(Vec(13.7069211, 99.530807)));
-      auto self = reinterpret_cast<JackPortLedTextField*>(port_names[7]);
-      self->managed_port = 7;
-      self->master = this;
-      self->box.size = mm2px(Vec(35.0, 10.753));
-      addChild(self);
-   }
+   def_port_label(4, 13.7069211, 60.530807);
+   def_port_label(5, 13.7069211, 73.530807);
+   def_port_label(6, 13.7069211, 86.530807);
+   def_port_label(7, 13.7069211, 99.530807);
 
    char port_name[128];
    hashidsxx::Hashids hash("grilled cheese sandwiches");
@@ -161,6 +123,10 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
       port_names[i]->text = std::string(port_name);
    }
 }
+
+#undef def_port_label
+#undef def_input
+#undef def_output
 
 JackAudioModuleWidget::~JackAudioModuleWidget() {
 }

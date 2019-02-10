@@ -10,48 +10,48 @@
 #define JACK_PORTS (AUDIO_OUTPUTS + AUDIO_INPUTS)
 
 struct JackAudioModule : Module {
-	enum ParamIds {
-		NUM_PARAMS
-	};
-	enum InputIds {
-		ENUMS(AUDIO_INPUT, AUDIO_INPUTS),
-		NUM_INPUTS
-	};
-	enum OutputIds {
-		ENUMS(AUDIO_OUTPUT, AUDIO_OUTPUTS),
-		NUM_OUTPUTS
-	};
-	enum LightIds {
-		ENUMS(INPUT_LIGHT, AUDIO_INPUTS / 2),
-		ENUMS(OUTPUT_LIGHT, AUDIO_OUTPUTS / 2),
-		NUM_LIGHTS
-	};
+   enum ParamIds {
+      NUM_PARAMS
+   };
+   enum InputIds {
+      ENUMS(AUDIO_INPUT, AUDIO_INPUTS),
+      NUM_INPUTS
+   };
+   enum OutputIds {
+      ENUMS(AUDIO_OUTPUT, AUDIO_OUTPUTS),
+      NUM_OUTPUTS
+   };
+   enum LightIds {
+      ENUMS(INPUT_LIGHT, AUDIO_INPUTS / 2),
+      ENUMS(OUTPUT_LIGHT, AUDIO_OUTPUTS / 2),
+      NUM_LIGHTS
+   };
 
-	sr_latch output_latch;
+   sr_latch output_latch;
 
-	int lastSampleRate = 0;
-	int lastNumOutputs = -1;
-	int lastNumInputs = -1;
+   int lastSampleRate = 0;
+   int lastNumOutputs = -1;
+   int lastNumInputs = -1;
 
-	SampleRateConverter<AUDIO_INPUTS> inputSrc;
-	SampleRateConverter<AUDIO_OUTPUTS> outputSrc;
+   SampleRateConverter<AUDIO_INPUTS> inputSrc;
+   SampleRateConverter<AUDIO_OUTPUTS> outputSrc;
 
-	// in rack's sample rate
-	DoubleRingBuffer<Frame<AUDIO_INPUTS>, 16> rack_input_buffer;
-	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, 16> rack_output_buffer;
-	DoubleRingBuffer<Frame<AUDIO_INPUTS>, (1<<15)> jack_input_buffer;
-	DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
+   // in rack's sample rate
+   DoubleRingBuffer<Frame<AUDIO_INPUTS>, 16> rack_input_buffer;
+   DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, 16> rack_output_buffer;
+   DoubleRingBuffer<Frame<AUDIO_INPUTS>, (1<<15)> jack_input_buffer;
+   DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
 
-	std::mutex jmutex;
-	jaq::port jport[JACK_PORTS];
+   std::mutex jmutex;
+   jaq::port jport[JACK_PORTS];
 
-	JackAudioModule();
+   JackAudioModule();
 
-	virtual ~JackAudioModule();
+   virtual ~JackAudioModule();
 
-	void wipe_buffers();
-	void globally_register();
-	void globally_unregister();
+   void wipe_buffers();
+   void globally_register();
+   void globally_unregister();
 
-	void step() override;
+   void step() override;
 };

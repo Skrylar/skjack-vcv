@@ -113,12 +113,15 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
    def_port_label(6, 13.7069211, 86.530807);
    def_port_label(7, 13.7069211, 99.530807);
 
-   char port_name[128];
+   static const size_t buffer_size = 128;
+   char port_name[buffer_size];
    hashidsxx::Hashids hash("grilled cheese sandwiches");
    std::string id = hash.encode(reinterpret_cast<size_t>(module));
 
    for (int i = 0; i < JACK_PORTS; i++) {
-      snprintf(reinterpret_cast<char*>(&port_name), 128, "%s:%d", id.c_str(), i);
+      snprintf(reinterpret_cast<char*>(&port_name),
+	       buffer_size,
+	       "%s:%d", id.c_str(), i);
       // XXX using setText here would cause crashes because it would try to tell
       port_names[i]->text = std::string(port_name);
    }

@@ -69,8 +69,8 @@ jack_audio_module_widget_base::jack_audio_module_widget_base
 
 #define def_port_label(id, x, y) {					\
    port_names[id] = Widget::create<JackPortLedTextField>(mm2px(Vec(x, y))); \
-   auto self = reinterpret_cast<JackPortLedTextField*>(port_names[0]);	\
-   self->managed_port = 0;						\
+   auto self = reinterpret_cast<JackPortLedTextField*>(port_names[id]);	\
+   self->managed_port = id;						\
    self->master = this;							\
    self->box.size = mm2px(Vec(35.0, 10.753));				\
    addChild(self);							\

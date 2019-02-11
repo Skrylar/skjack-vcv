@@ -78,11 +78,20 @@ void jack_audio_module_base::assign_stupid_port_names() {
 	     "%s:%d",
 	     id.c_str(),
 	     i);
+
+	 unsigned int flags = 0;
+	 switch (role) {
+	    case ROLE_DUPLEX:
+	       flags = (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput);
+	       break;
+	    case ROLE_OUTPUT:
+	       flags = JackPortIsOutput;
+	       break;
+	 }
 	    
 	 jport[i].register_audio
 	    (g_jack_client,
-	     reinterpret_cast<const char*>(&port_name),
-	     (i < AUDIO_OUTPUTS ? JackPortIsOutput : JackPortIsInput));
+	     reinterpret_cast<const char*>(&port_name), flags);
       }
    }
 }
@@ -194,11 +203,9 @@ void jack_audio_out8_module::step() {
 	  &inLen, jack_output_buffer.endData(), &outLen);
       rack_output_buffer.startIncr(inLen);
       jack_output_buffer.endIncr(outLen);
-   }
-
-   if (rack_input_buffer.full()) {
-      int inLen = rack_input_buffer.size();
-      int outLen = jack_input_buffer.capacity();
+      
+      inLen = rack_input_buffer.size();
+      outLen = jack_input_buffer.capacity();
       inputSrc.process
 	 (rack_input_buffer.startData(),
 	  &inLen, jack_input_buffer.endData(), &outLen);
@@ -208,8 +215,7 @@ void jack_audio_out8_module::step() {
 
    // TODO: consider capping this?
    // although an overflow here doesn't cause crashes...
-   if ((jack_output_buffer.size() > (g_jack_client.buffersize * 8)) ||
-       ( jack_input_buffer.size() > (g_jack_client.buffersize * 8)))
+   if (jack_output_buffer.size() > (g_jack_client.buffersize * 8))
    {
       // we're over half capacity, so set our output latch
       if (output_latch.try_set()) {

@@ -67,7 +67,7 @@ int on_jack_process(jack_nframes_t nframes, void *) {
 		  }
 
 		  for (int j = 0; j < AUDIO_INPUTS; j++) {
-		     jack_buffer[j+AUDIO_OUTPUTS][i] = input_frame.samples[j];
+		     jack_buffer[j+4][i] = input_frame.samples[j];
 		  }
 	       }
 
@@ -91,6 +91,7 @@ void init(Plugin *p) {
 
    // Add all Models defined throughout the plugin
    p->addModel(jack_audio_model);
+   p->addModel(jack_audio_out8_model);
 
    // Any other plugin initialization may go here.
    // As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.

@@ -7,10 +7,10 @@ SLUG = SkJack
 
 # Must follow the format in the Versioning section of
 # https://vcvrack.com/manual/PluginDevelopmentTutorial.html
-VERSION = 0.6.6
+VERSION = 0.6.7-pre
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -Isrc
+FLAGS += -Isrc -Wno-unknown-pragmas
 CFLAGS +=
 CXXFLAGS +=
 

@@ -2,15 +2,27 @@
 
 #include "skjack.hh"
 
-struct JackAudioModuleWidget : ModuleWidget {
+struct jack_audio_module_widget_base: public ModuleWidget {
    TextField* port_names[8];
 
-   JackAudioModuleWidget(JackAudioModule *module);
-   virtual ~JackAudioModuleWidget();
+   jack_audio_module_widget_base(jack_audio_module_base* module);
+   virtual ~jack_audio_module_widget_base();
 
-   /** \brief Hook to do something when a text widget reports a port has been named. */
+   // hook to do something when a text widget reports a port has been
+   // named.
    void on_port_renamed(int port, const std::string& name);
 
+   // save and restore port names with the vcv file
    virtual json_t *toJson() override;
    virtual void fromJson(json_t* json) override;
+};
+
+struct JackAudioModuleWidget: public jack_audio_module_widget_base {
+   JackAudioModuleWidget(JackAudioModule* module);
+   virtual ~JackAudioModuleWidget();
+};
+
+struct jack_audio_out8_module_widget: public jack_audio_module_widget_base {
+   jack_audio_out8_module_widget(jack_audio_out8_module* module);
+   virtual ~jack_audio_out8_module_widget();
 };

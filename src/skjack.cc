@@ -5,7 +5,7 @@ Plugin *plugin;
 jaq::client g_jack_client;
 std::condition_variable g_jack_cv;
 std::mutex g_audio_modules_mutex;
-std::vector<JackAudioModule*> g_audio_modules;
+std::vector<jack_audio_module_base*> g_audio_modules;
 std::atomic<unsigned int> g_audio_blocked(0);
 
 int on_jack_process(jack_nframes_t nframes, void *) {

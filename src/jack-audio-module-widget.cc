@@ -9,7 +9,7 @@ namespace rack {
 
 struct JackPortLedTextField : public LedDisplayTextField {
    int managed_port;
-   JackAudioModuleWidget* master;
+   jack_audio_module_widget_base* master;
 
    JackPortLedTextField() : LedDisplayTextField() {
       font = Font::load(assetPlugin(plugin, "res/3270Medium.ttf"));
@@ -61,6 +61,12 @@ struct JackPortLedTextField : public LedDisplayTextField {
    }
 };
 
+jack_audio_module_widget_base::jack_audio_module_widget_base
+(jack_audio_module_base* module):
+   ModuleWidget(module)
+{
+}
+
 #define def_port_label(id, x, y) {					\
    port_names[id] = Widget::create<JackPortLedTextField>(mm2px(Vec(x, y))); \
    auto self = reinterpret_cast<JackPortLedTextField*>(port_names[0]);	\
@@ -70,17 +76,19 @@ struct JackPortLedTextField : public LedDisplayTextField {
    addChild(self);							\
 }
 
-#define def_input(id, x, y) addInput					\
+#define def_input(self, id, x, y) addInput				\
    (Port::create<DavidLTPort>						\
     (mm2px(Vec(x, y)),							\
-     Port::INPUT, module, JackAudioModule::AUDIO_INPUT + id));
+     Port::INPUT, module, self::AUDIO_INPUT + id));
 
-#define def_output(id, x, y) addOutput					\
+#define def_output(self, id, x, y) addOutput				\
    (Port::create<DavidLTPort>						\
     (mm2px(Vec(x, y)),							\
-     Port::OUTPUT, module, JackAudioModule::AUDIO_OUTPUT + id));
+     Port::OUTPUT, module, self::AUDIO_OUTPUT + id));
 
-JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWidget(module) {
+JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
+   : jack_audio_module_widget_base(module)
+{
    setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB.svg")));
 
    addChild(Widget::create<ScrewSilver>
@@ -93,21 +101,69 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-   def_input(0, 3.7069211, 10.530807);
-   def_input(1, 3.7069211, 23.530807);
-   def_input(2, 3.7069211, 36.530807);
-   def_input(3, 3.7069211, 49.530807);
+   def_input(JackAudioModule, 0, 3.7069211, 10.530807);
+   def_input(JackAudioModule, 1, 3.7069211, 23.530807);
+   def_input(JackAudioModule, 2, 3.7069211, 36.530807);
+   def_input(JackAudioModule, 3, 3.7069211, 49.530807);
 
    def_port_label(0, 13.7069211, 8.530807);
    def_port_label(1, 13.7069211, 21.530807);
    def_port_label(2, 13.7069211, 34.530807);
    def_port_label(3, 13.7069211, 47.530807);
 
-   def_output(0, 3.7069211, 62.143906);
-   def_output(1, 3.7069211, 75.143906);
-   def_output(2, 3.7069211, 88.143906);
-   def_output(3, 3.7069211, 101.143906);
+   def_output(JackAudioModule, 0, 3.7069211, 62.143906);
+   def_output(JackAudioModule, 1, 3.7069211, 75.143906);
+   def_output(JackAudioModule, 2, 3.7069211, 88.143906);
+   def_output(JackAudioModule, 3, 3.7069211, 101.143906);
 
+   def_port_label(4, 13.7069211, 60.530807);
+   def_port_label(5, 13.7069211, 73.530807);
+   def_port_label(6, 13.7069211, 86.530807);
+   def_port_label(7, 13.7069211, 99.530807);
+
+   static const size_t buffer_size = 128;
+   char port_name[buffer_size];
+   hashidsxx::Hashids hash("grilled cheese sandwiches");
+   std::string id = hash.encode(reinterpret_cast<size_t>(module));
+
+   for (int i = 0; i < JACK_PORTS; i++) {
+      snprintf(reinterpret_cast<char*>(&port_name),
+	       buffer_size,
+	       "%s:%d", id.c_str(), i);
+      // XXX using setText here would cause crashes because it would try to tell
+      port_names[i]->text = std::string(port_name);
+   }
+}
+
+jack_audio_out8_module_widget::jack_audio_out8_module_widget
+(jack_audio_out8_module* module)
+   : jack_audio_module_widget_base(module)
+{
+   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8out.svg")));
+
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
+		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+
+   def_input(jack_audio_out8_module, 0, 3.7069211, 10.530807);
+   def_input(jack_audio_out8_module, 1, 3.7069211, 23.530807);
+   def_input(jack_audio_out8_module, 2, 3.7069211, 36.530807);
+   def_input(jack_audio_out8_module, 3, 3.7069211, 49.530807);
+   def_input(jack_audio_out8_module, 4, 3.7069211, 62.143906);
+   def_input(jack_audio_out8_module, 5, 3.7069211, 75.143906);
+   def_input(jack_audio_out8_module, 6, 3.7069211, 88.143906);
+   def_input(jack_audio_out8_module, 7, 3.7069211, 101.143906);
+
+   def_port_label(0, 13.7069211, 8.530807);
+   def_port_label(1, 13.7069211, 21.530807);
+   def_port_label(2, 13.7069211, 34.530807);
+   def_port_label(3, 13.7069211, 47.530807);
    def_port_label(4, 13.7069211, 60.530807);
    def_port_label(5, 13.7069211, 73.530807);
    def_port_label(6, 13.7069211, 86.530807);
@@ -131,10 +187,11 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule *module) : ModuleWi
 #undef def_input
 #undef def_output
 
-JackAudioModuleWidget::~JackAudioModuleWidget() {
-}
+jack_audio_module_widget_base::~jack_audio_module_widget_base() {}
+JackAudioModuleWidget::~JackAudioModuleWidget() {}
+jack_audio_out8_module_widget::~jack_audio_out8_module_widget() {}
 
-json_t* JackAudioModuleWidget::toJson() {
+json_t* jack_audio_module_widget_base::toJson() {
    auto map = ModuleWidget::toJson();
    auto port_names = json_array();
 
@@ -147,7 +204,7 @@ json_t* JackAudioModuleWidget::toJson() {
    return map;
 }
 
-void JackAudioModuleWidget::fromJson(json_t* json) {
+void jack_audio_module_widget_base::fromJson(json_t* json) {
    auto port_names = json_object_get(json, "port_names");
    if (json_is_array(port_names)) {
       for (size_t i = 0; i < std::min(json_array_size(port_names), (size_t)8); i++) {
@@ -159,7 +216,7 @@ void JackAudioModuleWidget::fromJson(json_t* json) {
    }
 }
 
-void JackAudioModuleWidget::on_port_renamed(int port, const std::string& name) {
+void jack_audio_module_widget_base::on_port_renamed(int port, const std::string& name) {
    if (port < 0 || port > JACK_PORTS) return;
    if (!g_jack_client.alive()) return;
    auto module = reinterpret_cast<JackAudioModule*>(this->module);
@@ -177,6 +234,10 @@ void JackAudioModuleWidget::on_port_renamed(int port, const std::string& name) {
 // author name for categorization per plugin, module slug (should never
 // change), human-readable module name, and any number of tags
 // (found in `include/tags.hpp`) separated by commas.
-Model* jack_audio_module =
+Model* jack_audio_model =
    Model::create<JackAudioModule, JackAudioModuleWidget>
    ("SkJack", "JackAudio", "JACK Audio", EXTERNAL_TAG);
+
+Model* jack_audio_out8_model =
+   Model::create<jack_audio_out8_module, jack_audio_out8_module_widget>
+   ("SkJack", "JackAudioOut8", "JACK Audio (8 Rack->JACK)", EXTERNAL_TAG);

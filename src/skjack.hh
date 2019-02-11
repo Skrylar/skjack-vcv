@@ -22,6 +22,13 @@ using namespace rack;
 #include "jaq.hh"
 
 struct JackAudioModule;
+struct JackAudioModuleWidget;
+
+struct jack_audio_module_base;
+struct jack_audio_module_widget_base;
+
+struct jack_audio_out8_module_widget;
+struct jack_audio_out8_module;
 
 extern std::condition_variable g_jack_cv;
 
@@ -29,11 +36,12 @@ extern std::condition_variable g_jack_cv;
 extern jaq::client g_jack_client;
 
 extern std::mutex g_audio_modules_mutex;
-extern std::vector<JackAudioModule*> g_audio_modules;
+extern std::vector<jack_audio_module_base*> g_audio_modules;
 extern std::atomic<unsigned int> g_audio_blocked;
 
 // Forward-declare the Plugin, defined in skjack.cc
 extern Plugin *plugin;
 
 // Forward-declare each Model, defined in each module source file
-extern Model *jack_audio_module;
+extern Model* jack_audio_model;
+extern Model* jack_audio_out8_model;

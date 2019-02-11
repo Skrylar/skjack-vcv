@@ -9,24 +9,13 @@
 #define AUDIO_INPUTS 4
 #define JACK_PORTS (AUDIO_OUTPUTS + AUDIO_INPUTS)
 
-struct JackAudioModule : Module {
-   enum ParamIds {
-      NUM_PARAMS
-   };
-   enum InputIds {
-      ENUMS(AUDIO_INPUT, AUDIO_INPUTS),
-      NUM_INPUTS
-   };
-   enum OutputIds {
-      ENUMS(AUDIO_OUTPUT, AUDIO_OUTPUTS),
-      NUM_OUTPUTS
-   };
-   enum LightIds {
-      ENUMS(INPUT_LIGHT, AUDIO_INPUTS / 2),
-      ENUMS(OUTPUT_LIGHT, AUDIO_OUTPUTS / 2),
-      NUM_LIGHTS
+struct jack_audio_module_base: public Module {
+   enum role_t {
+      ROLE_DUPLEX,		// standard skjack module
+      ROLE_OUTPUT		// all ports are outputs
    };
 
+   role_t role;
    sr_latch output_latch;
 
    int lastSampleRate = 0;
@@ -45,13 +34,49 @@ struct JackAudioModule : Module {
    std::mutex jmutex;
    jaq::port jport[JACK_PORTS];
 
-   JackAudioModule();
-
-   virtual ~JackAudioModule();
-
    void wipe_buffers();
    void globally_register();
    void globally_unregister();
+   void assign_stupid_port_names();
 
+   jack_audio_module_base(size_t params, size_t inputs,
+			  size_t outputs, size_t lights);
+   virtual ~jack_audio_module_base();
+};
+
+struct JackAudioModule: public jack_audio_module_base {
+   enum ParamIds {
+      NUM_PARAMS
+   };
+   enum InputIds {
+      ENUMS(AUDIO_INPUT, AUDIO_INPUTS),
+      NUM_INPUTS
+   };
+   enum OutputIds {
+      ENUMS(AUDIO_OUTPUT, AUDIO_OUTPUTS),
+      NUM_OUTPUTS
+   };
+   enum LightIds {
+      NUM_LIGHTS
+   };
+
+   JackAudioModule();
+   virtual ~JackAudioModule();
+
+   void step() override;
+};
+
+struct jack_audio_out8_module: public jack_audio_module_base {
+   enum ParamIds { NUM_PARAMS }; // none
+   enum InputIds {
+      ENUMS(AUDIO_INPUT, JACK_PORTS),
+      NUM_INPUTS
+   };
+   enum OutputIds { NUM_OUTPUTS }; // none
+   enum LightIds { NUM_LIGHTS };   // none
+
+   jack_audio_out8_module();
+   virtual ~jack_audio_out8_module();
+   
    void step() override;
 };

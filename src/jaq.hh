@@ -64,6 +64,8 @@ namespace jaq {
     client* mom;
     jack_port_t* handle;
 
+    bool m_output;
+
     port() : mom(0), handle(0) {}
 
     bool alive() const;
@@ -71,6 +73,8 @@ namespace jaq {
     bool register_audio(client& mom, const char* name, unsigned long flags);
 
     void unregister();
+
+    bool is_output() const;
 
     // returns port memory as an array of samples; `samples` should match
     // whatever you recieved via the `nsamples` parameter

@@ -12,12 +12,24 @@ Connection Kit to VCV Rack.
  - Output ports are marked with an off-color accent.
  - Each port may be named individually, and the name supplied in Rack
    will appear in your JACK patch bay.
- - Each name must be unique across an entire Rack instance.
+ - Every input must have a name that is unique across inputs.
+ - Every output must have a name that is unique across outputs.
  - If four ports are not enough, simply add more to a patch. Each
    module will create four input and output ports. All modules
    cooperate to ensure that audio is sent and received through JACK in
    lockstep (you can consult the power meter to see that only one of
    the JACK Audio modules will stall Rack.)
+
+*** Port names
+In =0.6.6= and prior, all port names had to be unique. Due to
+confusion and people's desire to use the same name for inputs and
+outputs (ex. chorus for both in and output) this behavior was changed.
+=0.6.7= now suffixes =-out= to all output ports and =-in= to all input
+ports. This means that if both an input and output have the name =01=
+in Rack, you will see =01-in= and =01-out= in your patchbay. This
+behavior is idiomatic and found in mainstream JACK applications
+(Ardour, non mixer.) It does mean that saved sessions *are
+incompatible* between these two versions.
 
 *** TODO Latency information
 We do not currently calculate the delay from the time audio might

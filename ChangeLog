@@ -1,0 +1,8 @@
+2019-02-12  Skrylar  <skrylar@Raziel>
+
+	* src/jack-audio-module-widget.cc: Audio module is now split in to
+	a base, 8-out and duplex module.
+
+	* src/jaq.cc: Input and output ports now have -in and -out
+	suffixes.
+

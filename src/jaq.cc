@@ -32,6 +32,18 @@ bool port::alive() const {
 bool port::register_audio(client& mom, const char* name, unsigned long flags) {
   if (!mom.alive()) return false;
   this->mom = &mom;
+
+  m_output = (flags & JackPortIsOutput) > 0;
+
+  static const size_t buffer_size = 128;
+  char port_name[buffer_size];
+  snprintf
+     (reinterpret_cast<char*>(&port_name),
+      buffer_size,
+      "%s-%s",
+      name,			  // desired port name
+      m_output ? "out" : "in"); // idiomatic suffix
+
   handle = client::x_jack_port_register(
     mom.handle,
     name,
@@ -41,14 +53,28 @@ bool port::register_audio(client& mom, const char* name, unsigned long flags) {
 
   if (handle) return true;
   else {
-    this->mom = 0;
-    return false;
+     this->mom = 0;
+     return false;
   }
+}
+
+bool port::is_output() const {
+   return m_output;
 }
 
 bool port::rename(const std::string& new_name) {
   if (!alive()) return false;
-  client::x_jack_port_rename(mom->handle, handle, new_name.c_str());
+
+  static const size_t buffer_size = 128;
+  char port_name[buffer_size];
+  snprintf
+     (reinterpret_cast<char*>(&port_name),
+      buffer_size,
+      "%s-%s",
+      new_name.c_str(),		  // desired port name
+      m_output ? "out" : "in"); // idiomatic suffix
+  
+  client::x_jack_port_rename(mom->handle, handle, port_name);
   // FIXME renames can actually fail, but detecting that is spotty
   return true;
 }

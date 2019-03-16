@@ -187,7 +187,7 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 (jack_audio_in8_module* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8out.svg")));
+   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8in.svg")));
 
    addChild(Widget::create<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));

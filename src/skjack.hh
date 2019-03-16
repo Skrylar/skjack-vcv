@@ -30,6 +30,9 @@ struct jack_audio_module_widget_base;
 struct jack_audio_out8_module_widget;
 struct jack_audio_out8_module;
 
+struct jack_audio_in8_module_widget;
+struct jack_audio_in8_module;
+
 extern std::condition_variable g_jack_cv;
 
 // We'll be using this from here on out.
@@ -45,3 +48,4 @@ extern Plugin *plugin;
 // Forward-declare each Model, defined in each module source file
 extern Model* jack_audio_model;
 extern Model* jack_audio_out8_model;
+extern Model* jack_audio_in8_model;

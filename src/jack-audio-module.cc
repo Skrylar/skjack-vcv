@@ -3,6 +3,12 @@
 
 #include <algorithm>
 
+// NOTE: The AUDIO_OUTPUTS and AUDIO_INPUTS constants have mostly lost
+// their meaning through several updates. If either is changed from 4
+// then stupidity will occur. Likely we should just remove them since
+// they are now unhelpful and will inevitably give someone the
+// impression that they can be changed.
+
 void JackAudioModule::step() {
    if (!g_jack_client.alive()) return;
 
@@ -71,7 +77,7 @@ void jack_audio_module_base::assign_stupid_port_names() {
       hashidsxx::Hashids hash("grilled cheese sandwiches");
       std::string id = hash.encode(reinterpret_cast<size_t>(this));
 
-      for (int i = 0; i < JACK_PORTS; i++) {	  
+      for (int i = 0; i < JACK_PORTS; i++) {
 	 snprintf
 	    (reinterpret_cast<char*>(&port_name),
 	     128,
@@ -87,8 +93,11 @@ void jack_audio_module_base::assign_stupid_port_names() {
 	    case ROLE_OUTPUT:
 	       flags = JackPortIsOutput;
 	       break;
+	    case ROLE_INPUT:
+	       flags = JackPortIsInput;
+	       break;
 	 }
-	    
+
 	 jport[i].register_audio
 	    (g_jack_client,
 	     reinterpret_cast<const char*>(&port_name), flags);
@@ -178,8 +187,8 @@ void jack_audio_out8_module::step() {
    // == PREPARE SAMPLE RATE STUFF ==
    int sampleRate = (int) engineGetSampleRate();
    // not a bug; we're abusing both input and output pipes to be output pipes
-   inputSrc.setRates(g_jack_client.samplerate, sampleRate);
-   outputSrc.setRates(g_jack_client.samplerate, sampleRate);
+   inputSrc.setRates(sampleRate, g_jack_client.samplerate);
+   outputSrc.setRates(sampleRate, g_jack_client.samplerate);
 
    // == FROM RACK TO JACK ==
    if (!rack_output_buffer.full()) {
@@ -203,7 +212,7 @@ void jack_audio_out8_module::step() {
 	  &inLen, jack_output_buffer.endData(), &outLen);
       rack_output_buffer.startIncr(inLen);
       jack_output_buffer.endIncr(outLen);
-      
+
       inLen = rack_input_buffer.size();
       outLen = jack_input_buffer.capacity();
       inputSrc.process
@@ -226,6 +235,66 @@ void jack_audio_out8_module::step() {
       if (g_audio_blocked >= g_audio_modules.size()) {
 	 std::unique_lock<std::mutex> lock(jmutex);
 	 g_jack_cv.wait(lock);
+      }
+   }
+}
+
+jack_audio_in8_module::jack_audio_in8_module()
+   : jack_audio_module_base(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS)
+{
+   role = ROLE_INPUT;
+   assign_stupid_port_names();
+
+   inputSrc.setChannels(AUDIO_INPUTS);
+   outputSrc.setChannels(AUDIO_OUTPUTS);
+
+   globally_register();
+}
+
+jack_audio_in8_module::~jack_audio_in8_module() {}
+
+void jack_audio_in8_module::step() {
+   if (!g_jack_client.alive()) return;
+
+   // == PREPARE SAMPLE RATE STUFF ==
+   int sampleRate = (int) engineGetSampleRate();
+   // not a bug; we're abusing both input and output pipes to be output pipes
+   inputSrc.setRates(g_jack_client.samplerate, sampleRate);
+   outputSrc.setRates(g_jack_client.samplerate, sampleRate);
+
+   // == FROM JACK TO RACK ==
+   if (rack_output_buffer.empty() && !jack_output_buffer.empty()) {
+      int inLen = jack_output_buffer.size();
+      int outLen = rack_output_buffer.capacity();
+      outputSrc.process
+	 (jack_output_buffer.startData(),
+	  &inLen, rack_output_buffer.endData(), &outLen);
+      jack_output_buffer.startIncr(inLen);
+      rack_output_buffer.endIncr(outLen);
+   }
+
+   if (!rack_output_buffer.empty()) {
+      Frame<AUDIO_OUTPUTS> output_frame = rack_output_buffer.shift();
+      for (int i = 0; i < AUDIO_OUTPUTS; i++) {
+	 outputs[AUDIO_OUTPUT+i].value = output_frame.samples[i] * 10.0f;
+      }
+   }
+
+   if (rack_input_buffer.empty() && !jack_input_buffer.empty()) {
+      int inLen = jack_input_buffer.size();
+      int outLen = rack_input_buffer.capacity();
+      inputSrc.process
+	 (jack_input_buffer.startData(),
+	  &inLen, rack_input_buffer.endData(), &outLen);
+      jack_input_buffer.startIncr(inLen);
+      rack_input_buffer.endIncr(outLen);
+   }
+
+   if (!rack_input_buffer.empty()) {
+      Frame<AUDIO_INPUTS> input_frame = rack_input_buffer.shift();
+      for (int i = 0; i < AUDIO_INPUTS; i++) {
+	 outputs[AUDIO_OUTPUT+AUDIO_OUTPUTS+i].value =
+	   input_frame.samples[i] * 10.0f;
       }
    }
 }

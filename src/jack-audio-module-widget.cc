@@ -183,6 +183,54 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
    }
 }
 
+jack_audio_in8_module_widget::jack_audio_in8_module_widget
+(jack_audio_in8_module* module)
+   : jack_audio_module_widget_base(module)
+{
+   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8out.svg")));
+
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+   addChild(Widget::create<ScrewSilver>
+	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
+		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+
+   def_output(jack_audio_in8_module, 0, 3.7069211, 10.530807);
+   def_output(jack_audio_in8_module, 1, 3.7069211, 23.530807);
+   def_output(jack_audio_in8_module, 2, 3.7069211, 36.530807);
+   def_output(jack_audio_in8_module, 3, 3.7069211, 49.530807);
+   def_output(jack_audio_in8_module, 4, 3.7069211, 62.143906);
+   def_output(jack_audio_in8_module, 5, 3.7069211, 75.143906);
+   def_output(jack_audio_in8_module, 6, 3.7069211, 88.143906);
+   def_output(jack_audio_in8_module, 7, 3.7069211, 101.143906);
+
+   def_port_label(0, 13.7069211, 8.530807);
+   def_port_label(1, 13.7069211, 21.530807);
+   def_port_label(2, 13.7069211, 34.530807);
+   def_port_label(3, 13.7069211, 47.530807);
+   def_port_label(4, 13.7069211, 60.530807);
+   def_port_label(5, 13.7069211, 73.530807);
+   def_port_label(6, 13.7069211, 86.530807);
+   def_port_label(7, 13.7069211, 99.530807);
+
+   static const size_t buffer_size = 128;
+   char port_name[buffer_size];
+   hashidsxx::Hashids hash("grilled cheese sandwiches");
+   std::string id = hash.encode(reinterpret_cast<size_t>(module));
+
+   for (int i = 0; i < JACK_PORTS; i++) {
+      snprintf(reinterpret_cast<char*>(&port_name),
+	       buffer_size,
+	       "%s:%d", id.c_str(), i);
+      // XXX using setText here would cause crashes because it would try to tell
+      port_names[i]->text = std::string(port_name);
+   }
+}
+
 #undef def_port_label
 #undef def_input
 #undef def_output
@@ -190,6 +238,7 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 jack_audio_module_widget_base::~jack_audio_module_widget_base() {}
 JackAudioModuleWidget::~JackAudioModuleWidget() {}
 jack_audio_out8_module_widget::~jack_audio_out8_module_widget() {}
+jack_audio_in8_module_widget::~jack_audio_in8_module_widget() {}
 
 json_t* jack_audio_module_widget_base::toJson() {
    auto map = ModuleWidget::toJson();
@@ -241,3 +290,7 @@ Model* jack_audio_model =
 Model* jack_audio_out8_model =
    Model::create<jack_audio_out8_module, jack_audio_out8_module_widget>
    ("SkJack", "JackAudioOut8", "JACK Audio (8 Rack->JACK)", EXTERNAL_TAG);
+
+Model* jack_audio_in8_model =
+   Model::create<jack_audio_in8_module, jack_audio_in8_module_widget>
+   ("SkJack", "JackAudioIn8", "JACK Audio (8 JACK->Rack)", EXTERNAL_TAG);

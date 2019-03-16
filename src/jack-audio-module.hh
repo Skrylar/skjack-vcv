@@ -12,7 +12,8 @@
 struct jack_audio_module_base: public Module {
    enum role_t {
       ROLE_DUPLEX,		// standard skjack module
-      ROLE_OUTPUT		// all ports are outputs
+      ROLE_OUTPUT,		// all ports are outputs
+      ROLE_INPUT		// all ports are inputs
    };
 
    role_t role;
@@ -77,6 +78,21 @@ struct jack_audio_out8_module: public jack_audio_module_base {
 
    jack_audio_out8_module();
    virtual ~jack_audio_out8_module();
-   
+
+   void step() override;
+};
+
+struct jack_audio_in8_module: public jack_audio_module_base {
+   enum ParamIds { NUM_PARAMS }; // none
+   enum InputIds { NUM_INPUTS }; // none
+   enum OutputIds {
+      ENUMS(AUDIO_OUTPUT, JACK_PORTS),
+      NUM_OUTPUTS
+   };
+   enum LightIds { NUM_LIGHTS };   // none
+
+   jack_audio_in8_module();
+   virtual ~jack_audio_in8_module();
+
    void step() override;
 };

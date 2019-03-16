@@ -26,3 +26,8 @@ struct jack_audio_out8_module_widget: public jack_audio_module_widget_base {
    jack_audio_out8_module_widget(jack_audio_out8_module* module);
    virtual ~jack_audio_out8_module_widget();
 };
+
+struct jack_audio_in8_module_widget: public jack_audio_module_widget_base {
+   jack_audio_in8_module_widget(jack_audio_in8_module* module);
+   virtual ~jack_audio_in8_module_widget();
+};

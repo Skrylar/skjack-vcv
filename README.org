@@ -15,63 +15,91 @@ Connection Kit to VCV Rack.
 
  - There are four input and four output ports.
  - Output ports are marked with an off-color accent.
- - Each port may be named individually, and the name supplied in Rack
-   will appear in your JACK patch bay.
- - Every input must have a name that is unique across inputs.
- - Every output must have a name that is unique across outputs.
- - If four ports are not enough, simply add more to a patch. Each
-   module will create four input and output ports. All modules
-   cooperate to ensure that audio is sent and received through JACK in
-   lockstep (you can consult the power meter to see that only one of
-   the JACK Audio modules will stall Rack.)
+ - Each port may be named.
 
-*** Port names
-In =0.6.6= and prior, all port names had to be unique. Due to
-confusion and people's desire to use the same name for inputs and
-outputs (ex. chorus for both in and output) this behavior was changed.
-=0.6.7= now suffixes =-out= to all output ports and =-in= to all input
-ports. This means that if both an input and output have the name =01=
-in Rack, you will see =01-in= and =01-out= in your patchbay. This
-behavior is idiomatic and found in mainstream JACK applications
-(Ardour, non mixer.) It does mean that saved sessions *are
-incompatible* between these two versions.
+*** Four ports is not enough for me!
+You have some options:
 
-*** TODO Latency information
-We do not currently calculate the delay from the time audio might
-enter Rack and leave it again. This means we don't tell JACK how much
-time we expect to take, and so it cannot perform any delay
-compensation.
+ 1) Just add another =JACK Audio=. Seriously.
+ 2) Add one of the special 8 inbound or outbound modules.
 
-If you try to play an input stream in to Rack, and simultaneously to a
-monitor, you will hear a short delay effect as the two signals are not
-correctly synchronized. There may also be issues trying to synchronize
-audio between separate running instances of Rack.
+JACK modules are designed to cooperate with one another. They will
+feed audio to JACK or to Rack and only one of them will block Rack
+while waiting for audio to be processed. You can consult the power
+meter for proof.
 
-These issues should only give you trouble for relatively advanced JACK
-patches. They have no effect on the default use case of a single Rack
-instance generating sound on its own and sending them to =Ardour= or
-=non mixer= for recording or out-of-Rack effects processing.
+** 8 RACK->JACK
+This is the same as a =JACK Audio= excepting all ports output to JACK.
 
-*** Clashes with Core and rcm
-On some systems JACK will take control of the audio device (on Linux,
-it takes over your ALSA sound card.) Trying to have both JACK and Rack
-connect to ALSA will result in performance issues or possibly
-crashes.
+** 8 JACK->RACK
+This is the same as a =JACK Audio= excepting all ports output to Rack.
 
-It is advisable that you delete any =Audio= modules from =Core= or any
-=Audio 16= modules from =rcm= when working with JACK. It is possible
-to leave them in a patch unused, but trying to delete them while a
-JACK server is running (even if you don't have SkJACK installed!) **can
-and will result in sadness of the crashing variety.**
+* JACK Quirks
 
-JACK modules do not have this problem in reverse. If SkJACK is
-installed and JACK is not, or a JACK server is not running, the
-modules will silently do nothing.
+** Port names
 
-** TODO Clock
-** TODO MIDI
+*** 0.6.7
+Port names have =-in= or =-out= suffixes added in the background. This
+matches how applications usually work in the JACK ecosystem. It also
+makes it possible to run Rack effects where both input and output
+channels are named "reverb."
 
-* Licenses
+Input ports must have unique names across all inputs in a Rack
+instance. All output ports must have unique names across all outputs
+in a Rack instance.
+
+This is a compatibility breaking change.
+
+*** 0.6.6
+All port names had to be unique across an entire Rack instance. Names
+appeared exactly in JACK as they appeared in Rack.
+
+** TODO Latency information
+We do not currently calculate and report processing delay between a
+signal entering Rack and exiting it. This means none of the delay
+compensation logic works and you may end up with desyncs if running
+more than one Rack instance or certain DAWs.
+
+The issue is known and some attempt to fix this issue is scheduled.
+
+* Compatibility
+
+** Patched Rack's with JACK in RtAudio
+Some users are running versions of Rack which contain patched RtAudio
+libraries. These patches allow you to use JACK with the native =Audio=
+modules.
+
+Experience has shown that while this works enough to get audio to and
+from Rack, it does not integrate well with the JACK ecosystem. I do
+not support these special builds.
+
+** Audio and rcm's Audio 16
+ALSA, JACK and Pulse Audio tend to compete for exclusive access to the
+sound card. Having an =Audio= module from =Core=, or an =Audio 16=
+from =rcm= *will* result in issues.
+
+These issues have mostly been reported as:
+
+ 1) A crash when exiting Rack,
+ 2) Rack crashing when trying to delete the =Audio= or =Audio 16=.
+
+Some workarounds are known:
+
+ 1) Delete the offending models from patches,
+ 2) Leave them be (leave the =Audio= modules blank so they read "ALSA"
+    but do not show a device such as =default-8=.
+
+** Systems without a JACK server
+Special support has been added to address:
+
+ 1) Running on machines with JACK, but the server is turned off.
+ 2) Running on machines where no JACK server is even installed.
+
+In both cases the modules will simply do nothing. You may still name
+ports and hook them up, and those will work if loaded in to a Rack
+instance with a functioning JACK server.
+
+* Licenses and Credits
 
 ** Graphics
 The module graphics template was designed by github user

@@ -101,25 +101,31 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-   def_input(JackAudioModule, 0, 3.7069211, 10.530807);
-   def_input(JackAudioModule, 1, 3.7069211, 23.530807);
-   def_input(JackAudioModule, 2, 3.7069211, 36.530807);
-   def_input(JackAudioModule, 3, 3.7069211, 49.530807);
-
+   /*[[[cog
+     for i in range(8):
+       if i < 4:
+         cog.outl('def_input(JackAudioModule, {}, 13.7069211, {});'.format(i, 10.530807 + (i * 13)))
+       else:
+         cog.outl('def_output(JackAudioModule, {}, 13.7069211, {});'.format(i % 4, 10.530807 + (i * 13)))
+       cog.outl('def_port_label({}, 13.7069211, {});'.format(i, 8.530807 + (i * 13)))
+     ]]] */
+   def_input(JackAudioModule, 0, 13.7069211, 10.530807);
    def_port_label(0, 13.7069211, 8.530807);
+   def_input(JackAudioModule, 1, 13.7069211, 23.530807);
    def_port_label(1, 13.7069211, 21.530807);
-   def_port_label(2, 13.7069211, 34.530807);
-   def_port_label(3, 13.7069211, 47.530807);
-
-   def_output(JackAudioModule, 0, 3.7069211, 62.143906);
-   def_output(JackAudioModule, 1, 3.7069211, 75.143906);
-   def_output(JackAudioModule, 2, 3.7069211, 88.143906);
-   def_output(JackAudioModule, 3, 3.7069211, 101.143906);
-
-   def_port_label(4, 13.7069211, 60.530807);
+   def_input(JackAudioModule, 2, 13.7069211, 36.530806999999996);
+   def_port_label(2, 13.7069211, 34.530806999999996);
+   def_input(JackAudioModule, 3, 13.7069211, 49.530806999999996);
+   def_port_label(3, 13.7069211, 47.530806999999996);
+   def_output(JackAudioModule, 0, 13.7069211, 62.530806999999996);
+   def_port_label(4, 13.7069211, 60.530806999999996);
+   def_output(JackAudioModule, 1, 13.7069211, 75.530807);
    def_port_label(5, 13.7069211, 73.530807);
+   def_output(JackAudioModule, 2, 13.7069211, 88.530807);
    def_port_label(6, 13.7069211, 86.530807);
+   def_output(JackAudioModule, 3, 13.7069211, 101.530807);
    def_port_label(7, 13.7069211, 99.530807);
+   //[[[end]]]
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];
@@ -151,23 +157,28 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
+   /*[[[cog
+     for i in range(8):
+       cog.outl('def_input(jack_audio_out8_module, {}, 3.7069211, {});'.format(i, 10.530807 + (13 * i)))
+       cog.outl('def_port_label({}, 13.7069211, {});'.format(i, 8.530807 + (i * 13)))
+     ]]] */
    def_input(jack_audio_out8_module, 0, 3.7069211, 10.530807);
-   def_input(jack_audio_out8_module, 1, 3.7069211, 23.530807);
-   def_input(jack_audio_out8_module, 2, 3.7069211, 36.530807);
-   def_input(jack_audio_out8_module, 3, 3.7069211, 49.530807);
-   def_input(jack_audio_out8_module, 4, 3.7069211, 62.143906);
-   def_input(jack_audio_out8_module, 5, 3.7069211, 75.143906);
-   def_input(jack_audio_out8_module, 6, 3.7069211, 88.143906);
-   def_input(jack_audio_out8_module, 7, 3.7069211, 101.143906);
-
    def_port_label(0, 13.7069211, 8.530807);
+   def_input(jack_audio_out8_module, 1, 3.7069211, 23.530807);
    def_port_label(1, 13.7069211, 21.530807);
-   def_port_label(2, 13.7069211, 34.530807);
-   def_port_label(3, 13.7069211, 47.530807);
-   def_port_label(4, 13.7069211, 60.530807);
+   def_input(jack_audio_out8_module, 2, 3.7069211, 36.530806999999996);
+   def_port_label(2, 13.7069211, 34.530806999999996);
+   def_input(jack_audio_out8_module, 3, 3.7069211, 49.530806999999996);
+   def_port_label(3, 13.7069211, 47.530806999999996);
+   def_input(jack_audio_out8_module, 4, 3.7069211, 62.530806999999996);
+   def_port_label(4, 13.7069211, 60.530806999999996);
+   def_input(jack_audio_out8_module, 5, 3.7069211, 75.530807);
    def_port_label(5, 13.7069211, 73.530807);
+   def_input(jack_audio_out8_module, 6, 3.7069211, 88.530807);
    def_port_label(6, 13.7069211, 86.530807);
+   def_input(jack_audio_out8_module, 7, 3.7069211, 101.530807);
    def_port_label(7, 13.7069211, 99.530807);
+   //[[[end]]]
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];
@@ -199,23 +210,28 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
+   /*[[[cog
+     for i in range(8):
+       cog.outl('def_output(jack_audio_in8_module, {}, 3.7069211, {});'.format(i, 10.530807 + (13 * i)))
+       cog.outl('def_port_label({}, 13.7069211, {});'.format(i, 8.530807 + (i * 13)))
+       ]]] */
    def_output(jack_audio_in8_module, 0, 3.7069211, 10.530807);
-   def_output(jack_audio_in8_module, 1, 3.7069211, 23.530807);
-   def_output(jack_audio_in8_module, 2, 3.7069211, 36.530807);
-   def_output(jack_audio_in8_module, 3, 3.7069211, 49.530807);
-   def_output(jack_audio_in8_module, 4, 3.7069211, 62.143906);
-   def_output(jack_audio_in8_module, 5, 3.7069211, 75.143906);
-   def_output(jack_audio_in8_module, 6, 3.7069211, 88.143906);
-   def_output(jack_audio_in8_module, 7, 3.7069211, 101.143906);
-
    def_port_label(0, 13.7069211, 8.530807);
+   def_output(jack_audio_in8_module, 1, 3.7069211, 23.530807);
    def_port_label(1, 13.7069211, 21.530807);
-   def_port_label(2, 13.7069211, 34.530807);
-   def_port_label(3, 13.7069211, 47.530807);
-   def_port_label(4, 13.7069211, 60.530807);
+   def_output(jack_audio_in8_module, 2, 3.7069211, 36.530806999999996);
+   def_port_label(2, 13.7069211, 34.530806999999996);
+   def_output(jack_audio_in8_module, 3, 3.7069211, 49.530806999999996);
+   def_port_label(3, 13.7069211, 47.530806999999996);
+   def_output(jack_audio_in8_module, 4, 3.7069211, 62.530806999999996);
+   def_port_label(4, 13.7069211, 60.530806999999996);
+   def_output(jack_audio_in8_module, 5, 3.7069211, 75.530807);
    def_port_label(5, 13.7069211, 73.530807);
+   def_output(jack_audio_in8_module, 6, 3.7069211, 88.530807);
    def_port_label(6, 13.7069211, 86.530807);
+   def_output(jack_audio_in8_module, 7, 3.7069211, 101.530807);
    def_port_label(7, 13.7069211, 99.530807);
+   //[[[end]]]
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];

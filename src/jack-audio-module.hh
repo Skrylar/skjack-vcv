@@ -40,6 +40,8 @@ struct jack_audio_module_base: public Module {
    void globally_unregister();
    void assign_stupid_port_names();
 
+   void report_backlogged();
+
    jack_audio_module_base(size_t params, size_t inputs,
 			  size_t outputs, size_t lights);
    virtual ~jack_audio_module_base();

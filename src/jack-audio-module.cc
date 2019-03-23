@@ -56,16 +56,20 @@ void JackAudioModule::step() {
 
    // TODO: consider capping this? although an overflow here doesn't cause crashes...
    if (jack_output_buffer.size() > (g_jack_client.buffersize * 8)) {
-      // we're over half capacity, so set our output latch
-      if (output_latch.try_set()) {
-	 g_audio_blocked++;
-      }
+      report_backlogged();
+   }
+}
 
-      // if everyone is output latched, stall Rack
-      if (g_audio_blocked >= g_audio_modules.size()) {
-	 std::unique_lock<std::mutex> lock(jmutex);
-	 g_jack_cv.wait(lock);
-      }
+void jack_audio_module_base::report_backlogged() {
+   // we're over half capacity, so set our output latch
+   if (output_latch.try_set()) {
+      g_audio_blocked++;
+   }
+
+   // if everyone is output latched, stall Rack
+   if (g_audio_blocked >= g_audio_modules.size()) {
+      std::unique_lock<std::mutex> lock(jmutex);
+      g_jack_cv.wait(lock);
    }
 }
 
@@ -224,18 +228,8 @@ void jack_audio_out8_module::step() {
 
    // TODO: consider capping this?
    // although an overflow here doesn't cause crashes...
-   if (jack_output_buffer.size() > (g_jack_client.buffersize * 8))
-   {
-      // we're over half capacity, so set our output latch
-      if (output_latch.try_set()) {
-	 g_audio_blocked++;
-      }
-
-      // if everyone is output latched, stall Rack
-      if (g_audio_blocked >= g_audio_modules.size()) {
-	 std::unique_lock<std::mutex> lock(jmutex);
-	 g_jack_cv.wait(lock);
-      }
+   if (jack_output_buffer.size() > (g_jack_client.buffersize * 8)) {
+      report_backlogged();
    }
 }
 
@@ -299,15 +293,6 @@ void jack_audio_in8_module::step() {
    }
 
    if (jack_output_buffer.size() < (g_jack_client.buffersize * 8)) {
-     // we're over half capacity, so set our output latch
-     if (output_latch.try_set()) {
-       g_audio_blocked++;
-     }
-
-     // if everyone is output latched, stall Rack
-     if (g_audio_blocked >= g_audio_modules.size()) {
-       std::unique_lock<std::mutex> lock(jmutex);
-       g_jack_cv.wait(lock);
-     }
+      report_backlogged();
    }
 }

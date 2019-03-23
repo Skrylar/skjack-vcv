@@ -42,6 +42,8 @@ extern std::mutex g_audio_modules_mutex;
 extern std::vector<jack_audio_module_base*> g_audio_modules;
 extern std::atomic<unsigned int> g_audio_blocked;
 
+extern const char* g_hashid_salt;
+
 // Forward-declare the Plugin, defined in skjack.cc
 extern Plugin *plugin;
 

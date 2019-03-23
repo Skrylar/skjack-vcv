@@ -8,6 +8,8 @@ std::mutex g_audio_modules_mutex;
 std::vector<jack_audio_module_base*> g_audio_modules;
 std::atomic<unsigned int> g_audio_blocked(0);
 
+const char* g_hashid_salt = "grilled cheese sandwiches";
+
 int on_jack_process(jack_nframes_t nframes, void *) {
    if (!g_jack_client.alive()) return 1;
    /* JACK doesn't like us doing things that might block for a "long time."

@@ -123,7 +123,7 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];
-   hashidsxx::Hashids hash("grilled cheese sandwiches");
+   hashidsxx::Hashids hash(g_hashid_salt);
    std::string id = hash.encode(reinterpret_cast<size_t>(module));
 
    for (int i = 0; i < JACK_PORTS; i++) {
@@ -171,7 +171,7 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];
-   hashidsxx::Hashids hash("grilled cheese sandwiches");
+   hashidsxx::Hashids hash(g_hashid_salt);
    std::string id = hash.encode(reinterpret_cast<size_t>(module));
 
    for (int i = 0; i < JACK_PORTS; i++) {
@@ -219,7 +219,7 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 
    static const size_t buffer_size = 128;
    char port_name[buffer_size];
-   hashidsxx::Hashids hash("grilled cheese sandwiches");
+   hashidsxx::Hashids hash(g_hashid_salt);
    std::string id = hash.encode(reinterpret_cast<size_t>(module));
 
    for (int i = 0; i < JACK_PORTS; i++) {

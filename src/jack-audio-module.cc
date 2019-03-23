@@ -78,7 +78,7 @@ void jack_audio_module_base::assign_stupid_port_names() {
    /* use the pointer to ourselves as a random unique port name */
    char port_name[128];
    if (g_jack_client.alive()) {
-      hashidsxx::Hashids hash("grilled cheese sandwiches");
+      hashidsxx::Hashids hash(g_hashid_salt);
       std::string id = hash.encode(reinterpret_cast<size_t>(this));
 
       for (int i = 0; i < JACK_PORTS; i++) {

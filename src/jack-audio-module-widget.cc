@@ -86,6 +86,21 @@ jack_audio_module_widget_base::jack_audio_module_widget_base
     (mm2px(Vec(x, y)),							\
      Port::OUTPUT, module, self::AUDIO_OUTPUT + id));
 
+void jack_audio_module_widget_base::assume_default_port_names() {
+   static const size_t buffer_size = 128;
+   char port_name[buffer_size];
+   hashidsxx::Hashids hash(g_hashid_salt);
+   std::string id = hash.encode(reinterpret_cast<size_t>(module));
+
+   for (int i = 0; i < JACK_PORTS; i++) {
+      snprintf(reinterpret_cast<char*>(&port_name),
+	       buffer_size,
+	       "%s:%d", id.c_str(), i);
+      // XXX using setText here would cause crashes because it would try to tell
+      port_names[i]->text = std::string(port_name);
+   }
+}
+
 JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
    : jack_audio_module_widget_base(module)
 {
@@ -127,18 +142,7 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
    def_port_label(7, 13.7069211, 99.530807);
    //[[[end]]]
 
-   static const size_t buffer_size = 128;
-   char port_name[buffer_size];
-   hashidsxx::Hashids hash(g_hashid_salt);
-   std::string id = hash.encode(reinterpret_cast<size_t>(module));
-
-   for (int i = 0; i < JACK_PORTS; i++) {
-      snprintf(reinterpret_cast<char*>(&port_name),
-	       buffer_size,
-	       "%s:%d", id.c_str(), i);
-      // XXX using setText here would cause crashes because it would try to tell
-      port_names[i]->text = std::string(port_name);
-   }
+   assume_default_port_names();
 }
 
 jack_audio_out8_module_widget::jack_audio_out8_module_widget
@@ -180,18 +184,7 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
    def_port_label(7, 13.7069211, 99.530807);
    //[[[end]]]
 
-   static const size_t buffer_size = 128;
-   char port_name[buffer_size];
-   hashidsxx::Hashids hash(g_hashid_salt);
-   std::string id = hash.encode(reinterpret_cast<size_t>(module));
-
-   for (int i = 0; i < JACK_PORTS; i++) {
-      snprintf(reinterpret_cast<char*>(&port_name),
-	       buffer_size,
-	       "%s:%d", id.c_str(), i);
-      // XXX using setText here would cause crashes because it would try to tell
-      port_names[i]->text = std::string(port_name);
-   }
+   assume_default_port_names();
 }
 
 jack_audio_in8_module_widget::jack_audio_in8_module_widget
@@ -233,18 +226,7 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
    def_port_label(7, 13.7069211, 99.530807);
    //[[[end]]]
 
-   static const size_t buffer_size = 128;
-   char port_name[buffer_size];
-   hashidsxx::Hashids hash(g_hashid_salt);
-   std::string id = hash.encode(reinterpret_cast<size_t>(module));
-
-   for (int i = 0; i < JACK_PORTS; i++) {
-      snprintf(reinterpret_cast<char*>(&port_name),
-	       buffer_size,
-	       "%s:%d", id.c_str(), i);
-      // XXX using setText here would cause crashes because it would try to tell
-      port_names[i]->text = std::string(port_name);
-   }
+   assume_default_port_names();
 }
 
 #undef def_port_label

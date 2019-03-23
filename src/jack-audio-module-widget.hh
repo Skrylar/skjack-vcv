@@ -15,6 +15,8 @@ struct jack_audio_module_widget_base: public ModuleWidget {
    // save and restore port names with the vcv file
    virtual json_t *toJson() override;
    virtual void fromJson(json_t* json) override;
+
+   void assume_default_port_names();
 };
 
 struct JackAudioModuleWidget: public jack_audio_module_widget_base {

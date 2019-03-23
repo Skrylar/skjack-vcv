@@ -297,4 +297,17 @@ void jack_audio_in8_module::step() {
 	   input_frame.samples[i] * 10.0f;
       }
    }
+
+   if (jack_output_buffer.size() < (g_jack_client.buffersize * 8)) {
+     // we're over half capacity, so set our output latch
+     if (output_latch.try_set()) {
+       g_audio_blocked++;
+     }
+
+     // if everyone is output latched, stall Rack
+     if (g_audio_blocked >= g_audio_modules.size()) {
+       std::unique_lock<std::mutex> lock(jmutex);
+       g_jack_cv.wait(lock);
+     }
+   }
 }

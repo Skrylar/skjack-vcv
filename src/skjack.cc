@@ -119,6 +119,8 @@ int on_jack_process(jack_nframes_t nframes, void *) {
 		  }
 		  module->jack_input_buffer.push(input_frame);
 	       }
+
+	       module->output_latch.reset();
 	    }
 	 } break;
       }

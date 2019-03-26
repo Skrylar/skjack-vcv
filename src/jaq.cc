@@ -171,6 +171,7 @@ namespace jaq {
 
    bool client::close() {
       if (lib) {
+#if 0
 	 jack_client_open = 0;
 	 jack_get_buffer_size = 0;
 	 jack_get_sample_rate = 0;
@@ -182,6 +183,7 @@ namespace jaq {
 	 jack_port_register = 0;
 	 jack_port_get_buffer = 0;
 	 jack_activate = 0;
+#endif
 	 dlclose(lib);
 	 lib = 0;
       }

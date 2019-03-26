@@ -78,16 +78,15 @@ namespace jaq {
 	  m_output ? "out" : "in"); // idiomatic suffix
 
       auto x = client::x_jack_port_by_name(mom->handle, port_name);
-
-      snprintf
-	 (reinterpret_cast<char*>(&port_name),
-	  buffer_size,
-	  "%s-%s",
-	  new_name.c_str(),	    // desired port name
-	  m_output ? "out" : "in"); // idiomatic suffix
-
-      if (x == NULL)
+      if (x == NULL) {
+	 snprintf
+	    (reinterpret_cast<char*>(&port_name),
+	     buffer_size,
+	     "%s-%s",
+	     new_name.c_str(),	    // desired port name
+	     m_output ? "out" : "in"); // idiomatic suffix
 	 return client::x_jack_port_rename(mom->handle, handle, port_name) == 0;
+      }
       else
 	 return false;
    }

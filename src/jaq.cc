@@ -169,9 +169,24 @@ bool client::open() {
   return true;
 }
 
-bool client::close() {
-  return false;
-}
+   bool client::close() {
+      if (lib) {
+	 jack_client_open = 0;
+	 jack_get_buffer_size = 0;
+	 jack_get_sample_rate = 0;
+	 jack_set_buffer_size_callback = 0;
+	 jack_set_sample_rate_callback = 0;
+	 jack_set_process_callback = 0;
+	 jack_port_rename = 0;
+	 jack_port_unregister = 0;
+	 jack_port_register = 0;
+	 jack_port_get_buffer = 0;
+	 jack_activate = 0;
+	 dlclose(lib);
+	 lib = 0;
+      }
+      return true;
+   }
 
 } /* namespace jaq */
 

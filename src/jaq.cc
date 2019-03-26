@@ -24,6 +24,8 @@ namespace jaq {
    jack_port_t* (*client::x_jack_port_register)(jack_client_t*, const char*, const char*, unsigned long, unsigned long);
    void* (*client::x_jack_port_get_buffer)(jack_port_t*, jack_nframes_t);
    int (*client::x_jack_activate)(jack_client_t*);
+   jack_port_t* (*client::x_jack_port_by_name)(jack_client_t*, const char *);
+   char* (*client::x_jack_get_client_name)(jack_client_t *);
 
    bool port::alive() const {
       return (mom && mom->alive() && handle);
@@ -65,16 +67,29 @@ namespace jaq {
    bool port::rename(const std::string& new_name) {
       if (!alive()) return false;
 
-      static const size_t buffer_size = 128;
+      static const size_t buffer_size = 256;
       char port_name[buffer_size];
       snprintf
 	 (reinterpret_cast<char*>(&port_name),
 	  buffer_size,
-	  "%s-%s",
-	  new_name.c_str(),		  // desired port name
+	  "%s:%s-%s",
+	  jack_get_client_name(mom->handle),
+	  new_name.c_str(),	    // desired port name
 	  m_output ? "out" : "in"); // idiomatic suffix
-  
-      return client::x_jack_port_rename(mom->handle, handle, port_name) == 0;
+
+      auto x = client::x_jack_port_by_name(mom->handle, port_name);
+
+      snprintf
+	 (reinterpret_cast<char*>(&port_name),
+	  buffer_size,
+	  "%s-%s",
+	  new_name.c_str(),	    // desired port name
+	  m_output ? "out" : "in"); // idiomatic suffix
+
+      if (x == NULL)
+	 return client::x_jack_port_rename(mom->handle, handle, port_name) == 0;
+      else
+	 return false;
    }
 
    void port::unregister() {
@@ -141,6 +156,8 @@ namespace jaq {
       knab(jack_port_register, jack_port_t* (*)(jack_client_t*, const char*, const char*, unsigned long, unsigned long));
       knab(jack_port_get_buffer, void* (*)(jack_port_t*, jack_nframes_t));
       knab(jack_activate, int (*)(jack_client_t*));
+      knab(jack_port_by_name, jack_port_t* (*)(jack_client_t*, const char *));
+      knab(jack_get_client_name, char* (*)(jack_client_t *));
 
 #undef knab
 

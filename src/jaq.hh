@@ -30,6 +30,8 @@ namespace jaq {
     static jack_port_t* (*x_jack_port_register)(jack_client_t*, const char*, const char*, unsigned long, unsigned long);
     static void* (*x_jack_port_get_buffer)(jack_port_t*, jack_nframes_t);
     static int (*x_jack_activate)(jack_client_t*);
+    static jack_port_t* (*x_jack_port_by_name)(jack_client_t*, const char *);
+    static char* (*x_jack_get_client_name)(jack_client_t *);
 
     static bool link(); // try to dynamically link to jack
 

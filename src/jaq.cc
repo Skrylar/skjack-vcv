@@ -37,23 +37,36 @@ namespace jaq {
 
       m_output = (flags & JackPortIsOutput) > 0;
 
-      static const size_t buffer_size = 128;
+      static const size_t buffer_size = 256;
       char port_name[buffer_size];
       snprintf
 	 (reinterpret_cast<char*>(&port_name),
 	  buffer_size,
-	  "%s-%s",
-	  name,			  // desired port name
+	  "%s:%s-%s",
+	  jack_get_client_name(mom.handle),
+	  name,			    // desired port name
 	  m_output ? "out" : "in"); // idiomatic suffix
 
-      handle = client::x_jack_port_register(
-	 mom.handle,
-	 name,
-	 JACK_DEFAULT_AUDIO_TYPE,
-	 flags,
-	 0);
+      auto x = client::x_jack_port_by_name(mom.handle, port_name);
+
+      if (x == NULL) {
+	 snprintf
+	    (reinterpret_cast<char*>(&port_name),
+	     buffer_size,
+	     "%s-%s",
+	     name,		       // desired port name
+	     m_output ? "out" : "in"); // idiomatic suffix
+
+	 handle = client::x_jack_port_register(
+	    mom.handle,
+	    name,
+	    JACK_DEFAULT_AUDIO_TYPE,
+	    flags,
+	    0);
+      } else return false;
 
       if (handle) return true;
+
       else {
 	 this->mom = 0;
 	 return false;

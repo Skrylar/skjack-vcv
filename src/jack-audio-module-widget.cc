@@ -252,12 +252,25 @@ json_t* jack_audio_module_widget_base::toJson() {
 }
 
 void jack_audio_module_widget_base::fromJson(json_t* json) {
+   auto module = reinterpret_cast<JackAudioModule*>(this->module);
    auto port_names = json_object_get(json, "port_names");
    if (json_is_array(port_names)) {
       for (size_t i = 0; i < std::min(json_array_size(port_names), (size_t)8); i++) {
 	 auto item = json_array_get(port_names, i);
 	 if (json_is_string(item)) {
-	    this->port_names[i]->setText(std::string(json_string_value(item), json_string_length(item)));
+	    if (module->jport[i].rename(json_string_value(item))) {
+	       this->port_names[i]->text = std::string(json_string_value(item));
+	    } else {
+	       static const size_t buffer_size = 128;
+	       char port_name[buffer_size];
+	       hashidsxx::Hashids hash(g_hashid_salt);
+	       std::string id = hash.encode(reinterpret_cast<size_t>(module));
+
+	       snprintf(reinterpret_cast<char*>(&port_name),
+			buffer_size,
+			"%s:%d", id.c_str(), (int)i);
+	       this->port_names[i]->setText(std::string(port_name));
+	    }
 	 }
       }
    }

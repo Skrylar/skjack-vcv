@@ -74,9 +74,7 @@ bool port::rename(const std::string& new_name) {
       new_name.c_str(),		  // desired port name
       m_output ? "out" : "in"); // idiomatic suffix
   
-  client::x_jack_port_rename(mom->handle, handle, port_name);
-  // FIXME renames can actually fail, but detecting that is spotty
-  return true;
+  return client::x_jack_port_rename(mom->handle, handle, port_name) == 0;
 }
 
 void port::unregister() {

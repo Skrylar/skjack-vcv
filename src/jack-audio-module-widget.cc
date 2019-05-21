@@ -68,7 +68,7 @@ jack_audio_module_widget_base::jack_audio_module_widget_base
 }
 
 #define def_port_label(id, x, y) {					\
-   port_names[id] = Widget::create<JackPortLedTextField>(mm2px(Vec(x, y))); \
+   port_names[id] = createWidget<JackPortLedTextField>(mm2px(Vec(x, y))); \
    auto self = reinterpret_cast<JackPortLedTextField*>(port_names[id]);	\
    self->managed_port = id;						\
    self->master = this;							\
@@ -106,13 +106,13 @@ JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
 {
    setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB.svg")));
 
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
@@ -151,13 +151,13 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 {
    setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8out.svg")));
 
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
@@ -193,13 +193,13 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 {
    setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8in.svg")));
 
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-   addChild(Widget::create<ScrewSilver>
+   addChild(createWidget<ScrewSilver>
 	    (Vec(box.size.x - 2 * RACK_GRID_WIDTH,
 		 RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 

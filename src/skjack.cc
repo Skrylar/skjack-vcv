@@ -1,7 +1,7 @@
 #include "skjack.hh"
 #include "jack-audio-module.hh"
 
-Plugin *plugin;
+rack::plugin::Plugin *plugin;
 jaq::client g_jack_client;
 std::condition_variable g_jack_cv;
 std::mutex g_audio_modules_mutex;
@@ -136,7 +136,7 @@ int on_jack_process(jack_nframes_t nframes, void *) {
 }
 
 void init(Plugin *p) {
-   plugin = p;
+   ::plugin = p;
    p->slug = TOSTRING(SLUG);
    p->version = TOSTRING(VERSION);
 

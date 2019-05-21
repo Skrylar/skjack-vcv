@@ -2,7 +2,7 @@
 RACK_DIR ?= ../..
 
 # FLAGS will be passed to both the C and C++ compiler
-FLAGS += -Isrc -Wno-unknown-pragmas
+FLAGS += -Wno-deprecated-declarations -Isrc -Wno-unknown-pragmas
 CFLAGS +=
 CXXFLAGS +=
 

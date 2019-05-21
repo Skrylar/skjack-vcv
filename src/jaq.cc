@@ -43,7 +43,7 @@ namespace jaq {
 	 (reinterpret_cast<char*>(&port_name),
 	  buffer_size,
 	  "%s:%s-%s",
-	  jack_get_client_name(mom.handle),
+	  client::x_jack_get_client_name(mom.handle),
 	  name,			    // desired port name
 	  m_output ? "out" : "in"); // idiomatic suffix
 
@@ -86,7 +86,7 @@ namespace jaq {
 	 (reinterpret_cast<char*>(&port_name),
 	  buffer_size,
 	  "%s:%s-%s",
-	  jack_get_client_name(mom->handle),
+	  client::x_jack_get_client_name(mom->handle),
 	  new_name.c_str(),	    // desired port name
 	  m_output ? "out" : "in"); // idiomatic suffix
 

@@ -12,10 +12,11 @@ struct JackPortLedTextField : public LedDisplayTextField {
    jack_audio_module_widget_base* master;
 
    JackPortLedTextField() : LedDisplayTextField() {
-      font = Font::load(assetPlugin(plugin, "res/3270Medium.ttf"));
+      font = Font::load(assetPlugin(::plugin, "res/3270Medium.ttf"));
    }
 
    void draw(NVGcontext *vg) override {
+     #if 0
       nvgScissor(vg, 0, 0, box.size.x, box.size.y);
 
       NVGcolor fill = nvgRGB(20, 39, 53);
@@ -53,10 +54,11 @@ struct JackPortLedTextField : public LedDisplayTextField {
       }
 
       nvgResetScissor(vg);
+      #endif
    }
 
-   void onTextChange() override {
-      LedDisplayTextField::onTextChange();
+   void onChange(const event::Change &e) override {
+      LedDisplayTextField::onChange(e);
       master->on_port_renamed(managed_port, text);
    }
 };
@@ -104,7 +106,7 @@ void jack_audio_module_widget_base::assume_default_port_names() {
 JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB.svg")));
+   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
@@ -149,7 +151,7 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 (jack_audio_out8_module* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8out.svg")));
+   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB-8out.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
@@ -191,7 +193,7 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 (jack_audio_in8_module* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(plugin, "res/JackAudioB-8in.svg")));
+   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB-8in.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
@@ -238,8 +240,8 @@ JackAudioModuleWidget::~JackAudioModuleWidget() {}
 jack_audio_out8_module_widget::~jack_audio_out8_module_widget() {}
 jack_audio_in8_module_widget::~jack_audio_in8_module_widget() {}
 
-json_t* jack_audio_module_widget_base::dataToJson() {
-   auto map = ModuleWidget::dataToJson();
+json_t* jack_audio_module_widget_base::toJson() {
+   auto map = ModuleWidget::toJson();
    auto port_names = json_array();
 
    for (int i = 0; i < JACK_PORTS; i++) {

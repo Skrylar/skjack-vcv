@@ -77,12 +77,12 @@ jack_audio_module_widget_base::jack_audio_module_widget_base
 }
 
 #define def_input(self, id, x, y) addInput				\
-   (Port::create<DavidLTPort>						\
+   (createPort<DavidLTPort>						\
     (mm2px(Vec(x, y)),							\
      Port::INPUT, module, self::AUDIO_INPUT + id));
 
 #define def_output(self, id, x, y) addOutput				\
-   (Port::create<DavidLTPort>						\
+   (createPort<DavidLTPort>						\
     (mm2px(Vec(x, y)),							\
      Port::OUTPUT, module, self::AUDIO_OUTPUT + id));
 

@@ -1,0 +1,39 @@
+{
+  "slug": "SkJack",
+  "name": "SkJack",
+  "version": "1.0.0",
+  "license": "GPL",
+  "author": "Skrylar",
+  "authorEmail": "joshua.cearley@gmail.com",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "https://github.com/Skrylar/skjack-vcv",
+  "donateUrl": "https://www.ko-fi.com/V7V6RG3E",
+  "modules": [
+    {
+      "slug": "JackAudio",
+      "name": "JACK Audio",
+      "description": "Four named input and output JACK ports.",
+      "tags": [
+        "external"
+      ]
+    },
+    {
+      "slug": "JackAudioOut8",
+      "name": "JACK Audio (8 Rack->JACK)",
+      "description": "Eight named JACK output ports.",
+      "tags": [
+        "external"
+      ]
+    },
+    {
+      "slug": "JackAudioIn8",
+      "name": "JACK Audio (8 JACK->RACK)",
+      "description": "Eight named JACK input ports.",
+      "tags": [
+        "external"
+      ]
+    }
+  ]
+}

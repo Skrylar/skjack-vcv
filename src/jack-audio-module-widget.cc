@@ -295,13 +295,10 @@ void jack_audio_module_widget_base::on_port_renamed(int port, const std::string&
 // change), human-readable module name, and any number of tags
 // (found in `include/tags.hpp`) separated by commas.
 Model* jack_audio_model =
-   Model::create<JackAudioModule, JackAudioModuleWidget>
-   ("SkJack", "JackAudio", "JACK Audio", EXTERNAL_TAG);
+   Model::create<JackAudioModule, JackAudioModuleWidget>("JackAudio");
 
 Model* jack_audio_out8_model =
-   Model::create<jack_audio_out8_module, jack_audio_out8_module_widget>
-   ("SkJack", "JackAudioOut8", "JACK Audio (8 Rack->JACK)", EXTERNAL_TAG);
+   Model::create<jack_audio_out8_module, jack_audio_out8_module_widget>("JackAudioOut8");
 
 Model* jack_audio_in8_model =
-   Model::create<jack_audio_in8_module, jack_audio_in8_module_widget>
-   ("SkJack", "JackAudioIn8", "JACK Audio (8 JACK->Rack)", EXTERNAL_TAG);
+   Model::create<jack_audio_in8_module, jack_audio_in8_module_widget>("JackAudioIn8");

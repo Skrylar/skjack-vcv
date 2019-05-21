@@ -84,7 +84,7 @@ jack_audio_module_widget_base::jack_audio_module_widget_base
 #define def_output(self, id, x, y) addOutput				\
    (createPort<DavidLTPort>						\
     (mm2px(Vec(x, y)),							\
-     Port::OUTPUT, module, self::AUDIO_OUTPUT + id));
+     PortWidget::OUTPUT, module, self::AUDIO_OUTPUT + id));
 
 void jack_audio_module_widget_base::assume_default_port_names() {
    static const size_t buffer_size = 128;

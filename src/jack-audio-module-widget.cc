@@ -238,8 +238,8 @@ JackAudioModuleWidget::~JackAudioModuleWidget() {}
 jack_audio_out8_module_widget::~jack_audio_out8_module_widget() {}
 jack_audio_in8_module_widget::~jack_audio_in8_module_widget() {}
 
-json_t* jack_audio_module_widget_base::toJson() {
-   auto map = ModuleWidget::toJson();
+json_t* jack_audio_module_widget_base::dataToJson() {
+   auto map = ModuleWidget::dataToJson();
    auto port_names = json_array();
 
    for (int i = 0; i < JACK_PORTS; i++) {

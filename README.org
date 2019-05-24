@@ -109,7 +109,9 @@ The module graphics template was designed by github user
 The [[https://github.com/rbanffy/3270font][3270 terminal font]] is used under the BSD-3 license.
 
 ** SkJACK
-This plugin is made available under BSD-3.
+This plugin is made available under GPL3.
+
+Previous versions were available under the BSD license. As Rack itself is no longer available under those terms, and we incorporate code from that project, this is no longer the case.
 
 ** JACK
 A copy of the JACK client headers are included under =src/jack=, which

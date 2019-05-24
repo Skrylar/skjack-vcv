@@ -15,46 +15,33 @@ struct JackPortLedTextField : public LedDisplayTextField {
       font = Font::load(assetPlugin(::plugin, "res/3270Medium.ttf"));
    }
 
-   void draw(NVGcontext *vg) override {
-     #if 0
-      nvgScissor(vg, 0, 0, box.size.x, box.size.y);
+   void draw(const DrawArgs &args) override {
 
-      NVGcolor fill = nvgRGB(20, 39, 53);
-      NVGcolor color = nvgRGB(255, 255, 255);
+    nvgScissor(args.vg, RECT_ARGS(args.clipBox));
 
-      // Background
-      nvgBeginPath(vg);
-      nvgRoundedRect(vg, 0, 0, box.size.x, box.size.y, 5.0);
-      nvgFillColor(vg, fill);
-      nvgFill(vg);
+   	// Background
+   	nvgBeginPath(args.vg);
+   	nvgRoundedRect(args.vg, 0, 0, box.size.x, box.size.y, 5.0);
+   	nvgFillColor(args.vg, nvgRGB(20, 39, 53));
+   	nvgFill(args.vg);
 
-      // Text
-      if (font->handle >= 0) {
-	 bndSetFont(font->handle);
+   	// Text
+   	if (font->handle >= 0) {
+   		bndSetFont(font->handle);
 
+   		NVGcolor highlightColor = nvgRGB(255, 255, 255);
+   		highlightColor.a = 0.5;
+   		int begin = std::min(cursor, selection);
+   		int end = (this == APP->event->selectedWidget) ? std::max(cursor, selection) : -1;
+   		bndIconLabelCaret(args.vg, textOffset.x, textOffset.y,
+   			box.size.x - 2*textOffset.x, box.size.y - 2*textOffset.y,
+   			-1, nvgRGB(255, 255, 255), 12, text.c_str(), highlightColor, begin, end);
 
+   		bndSetFont(APP->window->uiFont->handle);
+   	}
 
-	 NVGcolor highlightColor = color;
-	 highlightColor.a = 0.5;
+   	nvgResetScissor(args.vg);
 
-	 int begin = min(cursor, selection);
-	 int end = (this == gFocusedWidget) ? max(cursor, selection) : -1;
-	 bndIconLabelCaret(vg,
-			   textOffset.x, textOffset.y,
-			   box.size.x - 2*textOffset.x,
-			   box.size.y - 2*textOffset.y,
-			   -1,
-			   color,
-			   13, // font size
-			   text.c_str(),
-			   highlightColor,
-			   begin, end);
-
-	 bndSetFont(gGuiFont->handle);
-      }
-
-      nvgResetScissor(vg);
-      #endif
    }
 
    void onChange(const event::Change &e) override {

@@ -31,7 +31,7 @@ void JackAudioModule::process(const ProcessArgs &args) {
    if (!rack_input_buffer.empty()) {
       Frame<AUDIO_OUTPUTS> input_frame = rack_input_buffer.shift();
       for (int i = 0; i < AUDIO_INPUTS; i++) {
-	 outputs[AUDIO_OUTPUT+i].value = input_frame.samples[i] * 10.0f;
+	 outputs[AUDIO_OUTPUT+i].setVoltage(input_frame.samples[i] * 10.0f);
       }
    }
 
@@ -270,7 +270,7 @@ void jack_audio_in8_module::process(const ProcessArgs &args) {
    if (!rack_output_buffer.empty()) {
       Frame<AUDIO_OUTPUTS> output_frame = rack_output_buffer.shift();
       for (int i = 0; i < AUDIO_OUTPUTS; i++) {
-	 outputs[AUDIO_OUTPUT+i].value = output_frame.samples[i] * 10.0f;
+	 outputs[AUDIO_OUTPUT+i].setVoltage(output_frame.samples[i] * 10.0f);
       }
    }
 

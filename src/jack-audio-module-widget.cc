@@ -274,8 +274,9 @@ void jack_audio_module_widget_base::on_port_renamed(int port, const std::string&
    // XXX port names must be unique per client; using a non-unique name here
    // doesn't appear to "fail" but you do get a port with a blank name.
    if (!module->jport[port].rename(name)) {
-      debug("Changing port name failed");
-      //port_names[port]->setText(std::string(jack_port_short_name(module->jport[port])));
+     // warning was broken in 0.6->1.0
+     DEBUG("Changing port name failed");
+     //port_names[port]->setText(std::string(jack_port_short_name(module->jport[port])));
    }
 }
 

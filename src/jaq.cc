@@ -135,17 +135,17 @@ namespace jaq {
 
 #ifndef ARCH_WIN
       if (!lib) {
-	 warn("libjack" PARTY_HAT_SUFFIX " is not in linker path!");
+	 WARN("libjack" PARTY_HAT_SUFFIX " is not in linker path!");
 	 lib = dlopen("/usr/lib/libjack" PARTY_HAT_SUFFIX, RTLD_LAZY);
 	 if (!lib) {
-	    warn("/usr/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
+	    WARN("/usr/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
 	    lib = dlopen("/usr/lib/libjack" PARTY_HAT_SUFFIX, RTLD_LAZY);
 #endif
 	    if (!lib) {
 #ifndef ARCH_WIN
-	       warn("/usr/local/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
+	       WARN("/usr/local/lib/libjack" PARTY_HAT_SUFFIX " was not found either");
 #endif
-	       warn("I can't find any JACKs.");
+	       WARN("I can't find any JACKs.");
 	       return false;
 	    }
 #ifndef ARCH_WIN
@@ -153,9 +153,9 @@ namespace jaq {
       }
 #endif
 
-      info("We linked to JACK :^)");
+      INFO("We linked to JACK :^)");
 
-#define knab(y, z) x_##y = reinterpret_cast<z>(dlsym(lib, #y)); if (!x_##y) { warn("Could not find " #y " in your JACK."); goto goddamnit; }
+#define knab(y, z) x_##y = reinterpret_cast<z>(dlsym(lib, #y)); if (!x_##y) { WARN("Could not find " #y " in your JACK."); goto goddamnit; }
 
       knab(jack_client_open, jack_client_t* (*)(const char*, unsigned long, jack_status_t*));
       knab(jack_get_buffer_size, jack_nframes_t (*)(jack_client_t*));

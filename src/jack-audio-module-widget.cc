@@ -12,7 +12,7 @@ struct JackPortLedTextField : public LedDisplayTextField {
    jack_audio_module_widget_base* master;
 
    JackPortLedTextField() : LedDisplayTextField() {
-      font = Font::load(assetPlugin(::plugin, "res/3270Medium.ttf"));
+      font = APP->window->loadFont(assetPlugin(::plugin, "res/3270Medium.ttf"));
    }
 
    void draw(const DrawArgs &args) override {

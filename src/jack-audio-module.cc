@@ -13,7 +13,7 @@ void JackAudioModule::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==
-   int sampleRate = (int) engineGetSampleRate();
+   int sampleRate = (int) args.sampleRate;
    inputSrc.setRates(g_jack_client.samplerate, sampleRate);
    outputSrc.setRates(sampleRate, g_jack_client.samplerate);
 
@@ -189,7 +189,7 @@ void jack_audio_out8_module::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==
-   int sampleRate = (int) engineGetSampleRate();
+   int sampleRate = (int) args.sampleRate;
    // not a bug; we're abusing both input and output pipes to be output pipes
    inputSrc.setRates(sampleRate, g_jack_client.samplerate);
    outputSrc.setRates(sampleRate, g_jack_client.samplerate);
@@ -251,7 +251,7 @@ void jack_audio_in8_module::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==
-   int sampleRate = (int) engineGetSampleRate();
+   int sampleRate = (int) args.sampleRate;
    // not a bug; we're abusing both input and output pipes to be output pipes
    inputSrc.setRates(g_jack_client.samplerate, sampleRate);
    outputSrc.setRates(g_jack_client.samplerate, sampleRate);

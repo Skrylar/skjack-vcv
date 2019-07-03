@@ -9,7 +9,7 @@
 // they are now unhelpful and will inevitably give someone the
 // impression that they can be changed.
 
-void JackAudioModule::step() {
+void JackAudioModule::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==
@@ -185,7 +185,7 @@ jack_audio_out8_module::jack_audio_out8_module()
 
 jack_audio_out8_module::~jack_audio_out8_module() {}
 
-void jack_audio_out8_module::step() {
+void jack_audio_out8_module::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==
@@ -247,7 +247,7 @@ jack_audio_in8_module::jack_audio_in8_module()
 
 jack_audio_in8_module::~jack_audio_in8_module() {}
 
-void jack_audio_in8_module::step() {
+void jack_audio_in8_module::process(const ProcessArgs &args) {
    if (!g_jack_client.alive()) return;
 
    // == PREPARE SAMPLE RATE STUFF ==

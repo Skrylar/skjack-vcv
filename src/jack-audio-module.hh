@@ -66,7 +66,7 @@ struct JackAudioModule: public jack_audio_module_base {
    JackAudioModule();
    virtual ~JackAudioModule();
 
-   void step() override;
+   void process(const ProcessArgs &args) override;
 };
 
 struct jack_audio_out8_module: public jack_audio_module_base {
@@ -81,7 +81,7 @@ struct jack_audio_out8_module: public jack_audio_module_base {
    jack_audio_out8_module();
    virtual ~jack_audio_out8_module();
 
-   void step() override;
+   void process(const ProcessArgs &args) override;
 };
 
 struct jack_audio_in8_module: public jack_audio_module_base {
@@ -96,5 +96,5 @@ struct jack_audio_in8_module: public jack_audio_module_base {
    jack_audio_in8_module();
    virtual ~jack_audio_in8_module();
 
-   void step() override;
+   void process(const ProcessArgs &args) override;
 };

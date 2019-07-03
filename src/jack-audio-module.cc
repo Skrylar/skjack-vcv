@@ -29,7 +29,7 @@ void JackAudioModule::process(const ProcessArgs &args) {
    }
 
    if (!rack_input_buffer.empty()) {
-      Frame<AUDIO_OUTPUTS> input_frame = rack_input_buffer.shift();
+      dsp::Frame<AUDIO_OUTPUTS> input_frame = rack_input_buffer.shift();
       for (int i = 0; i < AUDIO_INPUTS; i++) {
 	 outputs[AUDIO_OUTPUT+i].setVoltage(input_frame.samples[i] * 10.0f);
       }
@@ -37,7 +37,7 @@ void JackAudioModule::process(const ProcessArgs &args) {
 
    // == FROM RACK TO JACK ==
    if (!rack_output_buffer.full()) {
-      Frame<AUDIO_OUTPUTS> outputFrame;
+      dsp::Frame<AUDIO_OUTPUTS> outputFrame;
       for (int i = 0; i < AUDIO_OUTPUTS; i++) {
 	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].getVoltage() / 10.0f;
       }
@@ -196,7 +196,7 @@ void jack_audio_out8_module::process(const ProcessArgs &args) {
 
    // == FROM RACK TO JACK ==
    if (!rack_output_buffer.full()) {
-      Frame<AUDIO_OUTPUTS> outputFrame;
+      dsp::Frame<AUDIO_OUTPUTS> outputFrame;
       for (int i = 0; i < 4; i++) {
 	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].getVoltage() / 10.0f;
       }
@@ -268,7 +268,7 @@ void jack_audio_in8_module::process(const ProcessArgs &args) {
    }
 
    if (!rack_output_buffer.empty()) {
-      Frame<AUDIO_OUTPUTS> output_frame = rack_output_buffer.shift();
+      dsp::Frame<AUDIO_OUTPUTS> output_frame = rack_output_buffer.shift();
       for (int i = 0; i < AUDIO_OUTPUTS; i++) {
 	 outputs[AUDIO_OUTPUT+i].setVoltage(output_frame.samples[i] * 10.0f);
       }
@@ -285,7 +285,7 @@ void jack_audio_in8_module::process(const ProcessArgs &args) {
    }
 
    if (!rack_input_buffer.empty()) {
-      Frame<AUDIO_INPUTS> input_frame = rack_input_buffer.shift();
+      dsp::Frame<AUDIO_INPUTS> input_frame = rack_input_buffer.shift();
       for (int i = 0; i < AUDIO_INPUTS; i++) {
 	 outputs[AUDIO_OUTPUT+AUDIO_OUTPUTS+i].value =
 	   input_frame.samples[i] * 10.0f;

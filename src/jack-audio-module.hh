@@ -23,14 +23,14 @@ struct jack_audio_module_base: public Module {
    int lastNumOutputs = -1;
    int lastNumInputs = -1;
 
-   SampleRateConverter<AUDIO_INPUTS> inputSrc;
-   SampleRateConverter<AUDIO_OUTPUTS> outputSrc;
+   dsp::SampleRateConverter<AUDIO_INPUTS> inputSrc;
+   dsp::SampleRateConverter<AUDIO_OUTPUTS> outputSrc;
 
    // in rack's sample rate
-   DoubleRingBuffer<Frame<AUDIO_INPUTS>, 16> rack_input_buffer;
-   DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, 16> rack_output_buffer;
-   DoubleRingBuffer<Frame<AUDIO_INPUTS>, (1<<15)> jack_input_buffer;
-   DoubleRingBuffer<Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
+   dsp::DoubleRingBuffer<dsp::Frame<AUDIO_INPUTS>, 16> rack_input_buffer;
+   dsp::DoubleRingBuffer<dsp::Frame<AUDIO_OUTPUTS>, 16> rack_output_buffer;
+   dsp::DoubleRingBuffer<dsp::Frame<AUDIO_INPUTS>, (1<<15)> jack_input_buffer;
+   dsp::DoubleRingBuffer<dsp::Frame<AUDIO_OUTPUTS>, (1<<15)> jack_output_buffer;
 
    std::mutex jmutex;
    jaq::port jport[JACK_PORTS];

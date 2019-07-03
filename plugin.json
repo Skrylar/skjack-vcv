@@ -1,13 +1,14 @@
 {
   "slug": "SkJack",
   "name": "SkJack",
+  "brand": "Skrylar",
   "version": "1.0.0",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "author": "Skrylar",
   "authorEmail": "joshua.cearley@gmail.com",
   "authorUrl": "",
-  "pluginUrl": "",
-  "manualUrl": "",
+  "pluginUrl": "https://github.com/Skrylar/skjack-vcv",
+  "manualUrl": "https://github.com/Skrylar/skjack-vcv",
   "sourceUrl": "https://github.com/Skrylar/skjack-vcv",
   "donateUrl": "https://www.ko-fi.com/V7V6RG3E",
   "modules": [

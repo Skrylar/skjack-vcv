@@ -1,11 +1,14 @@
 #pragma once
 
 // we don't control these, so don't complain to me about them
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
+#elif __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wall"
 #pragma GCC diagnostic ignored "-Wextra"
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything"
+#endif
 
 #include <vector>
 #include <condition_variable>
@@ -14,8 +17,11 @@
 #include "rack0.hpp"
 
 // re-entering our zone of concern
-#pragma GCC diagnostic pop
+#ifdef __clang__
 #pragma clang diagnostic pop
+#elif __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 using namespace rack;
 

@@ -93,7 +93,7 @@ void jack_audio_module_widget_base::assume_default_port_names() {
 JackAudioModuleWidget::JackAudioModuleWidget(JackAudioModule* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB.svg")));
+   setPanel(APP->window->loadSvg(assetPlugin(::plugin, "res/JackAudioB.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
@@ -138,7 +138,7 @@ jack_audio_out8_module_widget::jack_audio_out8_module_widget
 (jack_audio_out8_module* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB-8out.svg")));
+   setPanel(APP->window->loadSvg(assetPlugin(::plugin, "res/JackAudioB-8out.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));
@@ -180,7 +180,7 @@ jack_audio_in8_module_widget::jack_audio_in8_module_widget
 (jack_audio_in8_module* module)
    : jack_audio_module_widget_base(module)
 {
-   setPanel(SVG::load(assetPlugin(::plugin, "res/JackAudioB-8in.svg")));
+   setPanel(APP->window->loadSvg(assetPlugin(::plugin, "res/JackAudioB-8in.svg")));
 
    addChild(createWidget<ScrewSilver>
 	    (Vec(RACK_GRID_WIDTH, 0)));

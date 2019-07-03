@@ -39,7 +39,7 @@ void JackAudioModule::process(const ProcessArgs &args) {
    if (!rack_output_buffer.full()) {
       Frame<AUDIO_OUTPUTS> outputFrame;
       for (int i = 0; i < AUDIO_OUTPUTS; i++) {
-	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].value / 10.0f;
+	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].getVoltage() / 10.0f;
       }
       rack_output_buffer.push(outputFrame);
    }
@@ -198,12 +198,12 @@ void jack_audio_out8_module::process(const ProcessArgs &args) {
    if (!rack_output_buffer.full()) {
       Frame<AUDIO_OUTPUTS> outputFrame;
       for (int i = 0; i < 4; i++) {
-	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].value / 10.0f;
+	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i].getVoltage() / 10.0f;
       }
       rack_output_buffer.push(outputFrame);
 
       for (int i = 0; i < 4; i++) {
-	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i + 4].value / 10.0f;
+	 outputFrame.samples[i] = inputs[AUDIO_INPUT + i + 4].getVoltage() / 10.0f;
       }
       rack_input_buffer.push(outputFrame);
    }

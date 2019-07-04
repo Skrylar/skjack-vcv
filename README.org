@@ -1,11 +1,12 @@
-[[https://www.ko-fi.com/V7V6RG3E][https://www.ko-fi.com/img/donate_sm.png]]
-
-Skylights and SkJack modules are free but developing, debugging, and
-keeping up with Rack updates is not. [[https://www.ko-fi.com/V7V6RG3E][3$ is an hour that can be spent
-with Rack instead of doing menial typing labor on job markets.]]
 
 This plugin aims to bring first class support for the JACK Audio
 Connection Kit to VCV Rack.
+
+It has not been profitable to work on, so it is maintained or developed on a whim.
+
+[[https://www.ko-fi.com/V7V6RG3E][You are still free to send a tip or commission a module. ]] 
+
+[[https://www.ko-fi.com/V7V6RG3E][https://www.ko-fi.com/img/donate_sm.png]]
 
 * Modules
 ** JACK Audio
